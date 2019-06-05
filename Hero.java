@@ -7,7 +7,6 @@ public class Hero {
 	private int y;
 	private int width;
 	private int shift;
-	boolean collision;
 	Color color;
 
 	public Hero(int x, int y, int width, int shift, Color color) {
@@ -16,47 +15,41 @@ public class Hero {
 		this.width = width;
 		this.shift = shift;
 		this.color = color;
-		collision = false;
 	}
 	public Ellipse2D.Double getEllipse() {
 		return new Ellipse2D.Double(x, y, width, shift);
 	}
-	public void move(int direction, ArrayList<Wall> walls) {
-		collision = false;
-		Wall collisionWall = walls.get(0);
-		int collisionDir = 5;
+	public boolean collides(Rectangle collisionBox) {
+		if (getRect(4).intersects(collisionBox))
+			return true;
+		return false;
+	}
+	public Rectangle getRect(int dir) {
+		if (dir == 0)
+			return new Rectangle(x,y-2,width,shift);
+		else if (dir == 1)
+			return new Rectangle(x+2,y,width,shift);
+		else if (dir == 2)
+			return new Rectangle(x,y+2,width,shift);
+		else if (dir == 3)
+			return new Rectangle(x-2,y,width,shift);
+		return new Rectangle(x,y,width,shift);
+	}
+	public void move(int dir, ArrayList<Wall> walls) { //receive key code
+		boolean collision = false;
 		for (Wall wall : walls) {
-			if ((new Rectangle(x,y,width,shift)).intersects(wall.getRect())) {
+			if (getRect(dir).intersects(wall.getRect()))
 				collision = true;
-				collisionWall = wall;
-				collisionDir = direction;
-			}
 		}
 		if (!collision) {
-			if (direction == 0)
-				y -= shift;
-			else if (direction == 1)
-				x += width;
-			else if (direction == 2)
-				y += shift;
-			else if (direction == 3)
-				x -= width;
-		} else {
-			while (collision) {
-			if (collisionDir % 2 == 0) {
-				if (direction == 0)
-					y += shift;
-				else if (direction == 2)
-					y -= shift;
-			} else {
-				if (direction == 1)
-					x -= shift;
-				else if (direction == 3)
-					x += width;
-			}
-			if (!(new Rectangle(x,y,width,shift)).intersects(collisionWall.getRect()))
-				collision = false;
-			}
+			if (dir == 0)
+				y -= 2;
+			else if (dir == 1)
+				x += 2;
+			else if (dir == 2)
+				y += 2;
+			else if (dir == 3)
+				x -= 2;
 		}
 	}
 	public int getX() {
@@ -73,8 +66,5 @@ public class Hero {
 	}
 	public Color getColor() {
 		return color;
-	}
-	public boolean intersects() {
-		return collision;
 	}
 }
