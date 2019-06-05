@@ -5,18 +5,22 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 public class Maze extends JPanel implements KeyListener, Runnable {
-
+	private static final long serialVersionUID = 42l;
 	private ArrayList<Wall> walls;
 	private ArrayList<Monster> monsters;
 	private ArrayList<Entity> doors;
 	private ArrayList<Entity> switches;
+
 	private String[] mazes = {"Maze1","Maze2","Maze3"};
+
 	private int width = 20;
-	private int shift = 20;
+	private int height = 20;
+
 	private JFrame frame;
 	private Hero hero;
 	private Monster monster;
 	private Thread thread;
+
 	private boolean gameOn = true;
 	private boolean right = false;
 	private boolean left = false;
@@ -28,9 +32,9 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		frame.add(this);
 
 		createMaze("Maze1.txt");
-		hero = new Hero(20,50,width,shift,Color.GREEN);
-		createMonsters();
-		//background color
+		hero = new Hero(20, 50, width, height, Color.GREEN);
+		monster = new Monster(300, 50, width, height, Color.RED);
+
 		frame.addKeyListener(this);
 		frame.setSize(1300,750);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,10 +54,10 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 			while((text = input.readLine()) != null) {
 				for(int i = 0; i < text.length(); i++) {
 					if(text.charAt(i) == '-')
-						walls.add(new Wall(x,y,width,shift,Color.BLUE));
+						walls.add(new Wall(x,y,width,height,Color.BLUE));
 					x += width;
 				}
-				y += shift;
+				y += height;
 				x = 0;
 			}
 		}
@@ -61,12 +65,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 			System.err.println("File does not exist");
 		}
 	}
-	public void createMonsters() {
-		Monster m = new Monster(300,50,width,shift,Color.RED);
-		Monster m2 = new Monster(300,100,width,shift,Color.YELLOW);
-		monsters.add(m);
-		monsters.add(m2);
-	}
+
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
@@ -83,10 +82,8 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		g2.setColor(hero.getColor());
 		g2.fill(hero.getEllipse());
 
-		for (Monster m : monsters) {
-			g2.setColor(m.getColor());
-			g2.fill(m.getEllipse());
-		}
+		g2.setColor(monster.getColor());
+		g2.fill(monster.getEllipse());
 
 		if(!gameOn) {
 			g2.setColor(Color.RED);
@@ -107,9 +104,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 					hero.move(3,walls);
 
 				//move monster based on time
-				for (Monster m : monsters) {
-					m.move(1,walls,hero);
-				}
+				monster.move(1,walls,hero);
 
 				if (hero.getX() >= frame.getWidth() || hero.getY() >= frame.getHeight())
 					gameOn = false;
@@ -117,7 +112,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 					gameOn = false;
 			}
 			try {
-				thread.sleep(5);
+				thread.sleep(10);
 			} catch(InterruptedException e){}
 			repaint();
 		}

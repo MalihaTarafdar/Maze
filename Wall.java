@@ -4,18 +4,18 @@ public class Wall {
 	private int x;
 	private int y;
 	private int width;
-	private int shift;
+	private int height;
 	private Color color;
 
-	public Wall(int x, int y, int width, int shift, Color color) {
+	public Wall(int x, int y, int width, int height, Color color) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
-		this.shift = shift;
+		this.height = height;
 		this.color = color;
 	}
 	public Rectangle getRect() {
-		return new Rectangle(x, y, width, shift);
+		return new Rectangle(x, y, width, height);
 	} //x*width
 	public int getX() {
 		return x;
@@ -26,8 +26,8 @@ public class Wall {
 	public int getWidth() {
 		return width;
 	}
-	public int getShift() {
-		return shift;
+	public int getheight() {
+		return height;
 	}
 	public Color getColor() {
 		return color;

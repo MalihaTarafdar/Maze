@@ -6,21 +6,21 @@ public class Monster {
 	private int x;
 	private int y;
 	private int width;
-	private int shift;
+	private int height;
 	private Color color;
 
-	public Monster(int x, int y, int width, int shift, Color color) {
+	public Monster(int x, int y, int width, int height, Color color) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
-		this.shift = shift;
+		this.height = height;
 		this.color = color;
 	}
 	public Ellipse2D.Double getEllipse() {
-		return new Ellipse2D.Double(x, y, width, shift);
+		return new Ellipse2D.Double(x, y, width, height);
 	}
 	public Rectangle getRect() {
-		return new Rectangle(x,y,width,shift);
+		return new Rectangle(x,y,width,height);
 	}
 	public boolean collides(ArrayList<Wall> walls) {
 		for (Wall wall : walls) {
@@ -32,13 +32,13 @@ public class Monster {
 	public void move(int dir, ArrayList<Wall> walls, Hero hero) {
 		if (!collides(walls)) {
 			if (dir == 0)
-				y -= 2;
+				y -= 1;
 			else if (dir == 1)
-				x += 2;
+				x += 1;
 			else if (dir == 2)
-				y += 2;
+				y += 1;
 			else if (dir == 3)
-				x -= 2;
+				x -= 1;
 		}
 	}
 
@@ -51,8 +51,8 @@ public class Monster {
 	public int getWidth() {
 		return width;
 	}
-	public int getShift() {
-		return shift;
+	public int getheight() {
+		return height;
 	}
 	public Color getColor() {
 		return color;

@@ -6,18 +6,18 @@ public class Hero {
 	private int x;
 	private int y;
 	private int width;
-	private int shift;
+	private int height;
 	Color color;
 
-	public Hero(int x, int y, int width, int shift, Color color) {
+	public Hero(int x, int y, int width, int height, Color color) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
-		this.shift = shift;
+		this.height = height;
 		this.color = color;
 	}
 	public Ellipse2D.Double getEllipse() {
-		return new Ellipse2D.Double(x, y, width, shift);
+		return new Ellipse2D.Double(x, y, width, height);
 	}
 	public boolean collides(Rectangle collisionBox) {
 		if (getRect(4).intersects(collisionBox))
@@ -26,14 +26,14 @@ public class Hero {
 	}
 	public Rectangle getRect(int dir) {
 		if (dir == 0)
-			return new Rectangle(x,y-2,width,shift);
+			return new Rectangle(x,y-2,width,height);
 		else if (dir == 1)
-			return new Rectangle(x+2,y,width,shift);
+			return new Rectangle(x+2,y,width,height);
 		else if (dir == 2)
-			return new Rectangle(x,y+2,width,shift);
+			return new Rectangle(x,y+2,width,height);
 		else if (dir == 3)
-			return new Rectangle(x-2,y,width,shift);
-		return new Rectangle(x,y,width,shift);
+			return new Rectangle(x-2,y,width,height);
+		return new Rectangle(x,y,width,height);
 	}
 	public void move(int dir, ArrayList<Wall> walls) { //receive key code
 		boolean collision = false;
@@ -61,8 +61,8 @@ public class Hero {
 	public int getWidth() {
 		return width;
 	}
-	public int getShift() {
-		return shift;
+	public int getheight() {
+		return height;
 	}
 	public Color getColor() {
 		return color;
