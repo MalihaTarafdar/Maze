@@ -46,6 +46,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 	public void createMaze(String fileName) {
 		walls = new ArrayList<Wall>();
 		File name = new File(fileName);
+
 		try {
 			BufferedReader input = new BufferedReader(new FileReader(name));
 			int x = 0;
@@ -74,9 +75,9 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 
 		for(Wall wall : walls) {
 			g2.setColor(wall.getColor());
-			g2.fill(wall.getRect());
+			g2.fill(wall.hitBox());
 			g2.setColor(Color.ORANGE);
-			g2.draw(wall.getRect());
+			g2.draw(wall.hitBox());
 		}
 
 		g2.setColor(hero.getColor());
@@ -108,7 +109,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 
 				if (hero.getX() >= frame.getWidth() || hero.getY() >= frame.getHeight())
 					gameOn = false;
-				if (hero.collides(monster.getRect()))
+				if (hero.collides(monster.hitBox()))
 					gameOn = false;
 			}
 			try {

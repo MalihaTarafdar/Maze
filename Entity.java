@@ -7,7 +7,7 @@ public class Entity {
 	private int height;
 	private Color color;
 
-	public Entity(int x, int y, int width, int height) {
+	public Entity(int x, int y, int width, int height, Color color) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
