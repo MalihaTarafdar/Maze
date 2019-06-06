@@ -14,9 +14,16 @@ public class Entity {
 		this.height = height;
 		this.color = color;
 	}
+
 	public Rectangle hitBox() {
-		return new Rectangle(x,y,width,height);
+		return new Rectangle(x, y, width, height);
 	}
+	public boolean collision(Rectangle hitBox) {
+		if (hitBox().intersects(hitBox))
+			return true;
+		return false;
+	}
+
 	public void setX(int x) {
 		this.x = x;
 	}
@@ -30,8 +37,9 @@ public class Entity {
 		this.height = height;
 	}
 	public void setColor(int r, int g, int b) {
-		this.color = new Color(r,g,b);
+		this.color = new Color(r, g, b);
 	}
+
 	public int getX() {
 		return x;
 	}

@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 public class Maze extends JPanel implements KeyListener, Runnable {
-	private static final long serialVersionUID = 42l;
 	private ArrayList<Wall> walls;
 	private ArrayList<Monster> monsters;
 	private ArrayList<Entity> doors;
@@ -55,7 +54,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 			while((text = input.readLine()) != null) {
 				for(int i = 0; i < text.length(); i++) {
 					if(text.charAt(i) == '-')
-						walls.add(new Wall(x,y,width,height,Color.BLUE));
+						walls.add(new Wall(x, y, width, height, Color.BLUE));
 					x += width;
 				}
 				y += height;
@@ -92,24 +91,25 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 			g2.drawString("Game Over",frame.getWidth()/2,frame.getHeight()/2);
 		}
 	}
+
 	public void run() {
 		while(true) {
 			if(gameOn) {
 				if(up)
-					hero.move(0,walls);
+					hero.move('W', walls);
 				if(right)
-					hero.move(1,walls);
+					hero.move('D', walls);
 				if(down)
-					hero.move(2,walls);
+					hero.move('S', walls);
 				if(left)
-					hero.move(3,walls);
+					hero.move('A', walls);
 
 				//move monster based on time
-				monster.move(1,walls,hero);
+				monster.move(1, walls);
 
 				if (hero.getX() >= frame.getWidth() || hero.getY() >= frame.getHeight())
 					gameOn = false;
-				if (hero.collides(monster.hitBox()))
+				if (hero.collision(monster.hitBox()))
 					gameOn = false;
 			}
 			try {
@@ -118,30 +118,32 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 			repaint();
 		}
 	}
+
 	public void keyPressed(KeyEvent e)  {
-		if(e.getKeyCode() == 38)
+		if(e.getKeyCode() == KeyEvent.VK_W)
 			up = true;
-		if(e.getKeyCode() == 39)
+		if(e.getKeyCode() == KeyEvent.VK_D)
 			right = true;
-		if(e.getKeyCode() == 40)
+		if(e.getKeyCode() == KeyEvent.VK_S)
 			down = true;
-		if(e.getKeyCode() == 37)
+		if(e.getKeyCode() == KeyEvent.VK_A)
 			left = true;
 	}
+
 	public void keyReleased(KeyEvent e) {
-		if(e.getKeyCode() == 38)
+		if(e.getKeyCode() == KeyEvent.VK_W)
 			up = false;
-		if(e.getKeyCode() == 39)
+		if(e.getKeyCode() == KeyEvent.VK_D)
 			right = false;
-		if(e.getKeyCode() == 40)
+		if(e.getKeyCode() == KeyEvent.VK_S)
 			down = false;
-		if(e.getKeyCode() == 37)
+		if(e.getKeyCode() == KeyEvent.VK_A)
 			left = false;
 	}
+
 	public void keyTyped(KeyEvent e) {}
 
 	public static void main(String[] args) {
 		Maze app = new Maze();
 	}
-
 }

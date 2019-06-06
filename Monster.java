@@ -20,7 +20,7 @@ public class Monster extends Entity {
 		return false;
 	}
 
-	public void move(int dir, ArrayList<Wall> walls, Hero hero) {
+	public void move(int dir, ArrayList<Wall> walls) {
 		if (!collision(walls)) {
 			if (dir == 0)
 				setY(getY() - 1);
