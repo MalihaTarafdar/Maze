@@ -6,6 +6,7 @@ public class Entity {
 	private int width;
 	private int height;
 	private Color color;
+	private boolean on;
 
 	public Entity(int x, int y, int width, int height, Color color) {
 		this.x = x;
@@ -13,6 +14,7 @@ public class Entity {
 		this.width = width;
 		this.height = height;
 		this.color = color;
+		on = false;
 	}
 
 	public Rectangle hitBox() {
@@ -39,6 +41,9 @@ public class Entity {
 	public void setColor(int r, int g, int b) {
 		this.color = new Color(r, g, b);
 	}
+	public void setState(boolean on) {
+		this.on = on;
+	}
 
 	public int getX() {
 		return x;
@@ -54,5 +59,8 @@ public class Entity {
 	}
 	public Color getColor() {
 		return color;
+	}
+	public boolean isOn() {
+		return on;
 	}
 }

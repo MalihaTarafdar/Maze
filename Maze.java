@@ -9,6 +9,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 	private ArrayList<Monster> monsters;
 	private ArrayList<Entity> doors;
 	private ArrayList<Entity> switches;
+	private ArrayList<Entity> monsterPath;
 
 	private String[] mazes = {"Maze1","Maze2","Maze3"};
 
@@ -20,6 +21,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 	private Hero hero;
 	private Monster monster;
 	private Thread thread;
+	private Entity end;
 
 	private boolean right = false;
 	private boolean left = false;
@@ -31,8 +33,8 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		frame.add(this);
 
 		createMaze("Maze1.txt");
-		hero = new Hero(30, 38, width, height, new Color(35, 140, 15));
-		monster = new Monster(355, 38, width, height, Color.RED);
+		hero = new Hero(100, 38, width, height, Color.GREEN);
+		monster = new Monster(10, 38, width, height, Color.RED);
 
 		frame.addKeyListener(this);
 		frame.setSize(1300,750);
@@ -44,6 +46,11 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 
 	public void createMaze(String fileName) {
 		walls = new ArrayList<Wall>();
+		doors = new ArrayList<Entity>();
+		switches = new ArrayList<Entity>();
+		monsterPath = new ArrayList<Entity>();
+		end = new Entity(frame.getWidth(), frame.getHeight(), 30, 30, Color.MAGENTA);
+
 		File name = new File(fileName);
 
 		try {
@@ -55,6 +62,17 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 				for(int i = 0; i < text.length(); i++) {
 					if(text.charAt(i) == '*')
 						walls.add(new Wall(x, y, 30, 30, Color.BLUE));
+					if (text.charAt(i) == '-')
+						doors.add(new Entity(x, y, 30, 30, Color.GRAY));
+					if (text.charAt(i) == 'X')
+						switches.add(new Entity(x + 10, y + 10, 10, 10, Color.YELLOW));
+					if (text.charAt(i) == ' ')
+						monsterPath.add(new Entity(x + 15, y + 15, 5, 5, Color.RED));
+					if (text.charAt(i) == 'E') {
+						end.setX(x);
+						end.setY(y);
+					}
+
 					x += 30;
 				}
 				y += 30;
@@ -76,11 +94,22 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 			g2.setColor(wall.getColor());
 			g2.fill(wall.hitBox());
 		}
+		for (Entity s : switches) {
+			g2.setColor(s.getColor());
+			if (!s.isOn())
+				g2.fill(s.hitBox());
+		}
+		for (Entity door : doors) {
+			g2.setColor(door.getColor());
+			if (!door.isOn())
+				g2.fill(door.hitBox());
+		}
+		for (Entity path : monsterPath) {
+
+		}
 
 		g2.setColor(hero.getColor());
 		g2.fill(hero.getEllipse());
-		g2.setColor(Color.ORANGE);
-		g2.draw(hero.getEllipse());
 
 		g2.setColor(monster.getColor());
 		g2.fill(monster.getEllipse());
@@ -99,23 +128,38 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		while(true) {
 			if(gameOn == 2) {
 				if(up)
-					hero.move('W', walls);
+					hero.move('W', walls, doors);
 				if(right)
-					hero.move('D', walls);
+					hero.move('D', walls, doors);
 				if(down)
-					hero.move('S', walls);
+					hero.move('S', walls, doors);
 				if(left)
-					hero.move('A', walls);
+					hero.move('A', walls, doors);
 
-				monster.move(1, walls);
+				//monster.move(monsterPath);
 
-				if (hero.getX() >= frame.getWidth() || hero.getY() >= frame.getHeight())
+				if (!switches.get(0).isOn() && hero.collision(switches.get(0).hitBox())) {
+					doors.get(3).setState(true);
+					switches.get(0).setState(true);
+				} else if (!switches.get(1).isOn() && hero.collision(switches.get(1).hitBox())) {
+					doors.get(0).setState(true);
+					switches.get(1).setState(true);
+				} else if (!switches.get(2).isOn() && hero.collision(switches.get(2).hitBox())) {
+					doors.get(2).setState(true);
+					switches.get(2).setState(true);
+				} else if (!switches.get(3).isOn() && hero.collision(switches.get(3).hitBox())) {
+					doors.get(1).setState(true);
+					switches.get(3).setState(true);
+				}
+
+
+				if (hero.collision(end.hitBox()))
 					gameOn = 1;
 				if (hero.collision(monster.hitBox()))
 					gameOn = 0;
 			}
 			try {
-				thread.sleep(5);
+				thread.sleep(6);
 			} catch(InterruptedException e){}
 			repaint();
 		}

@@ -12,33 +12,39 @@ public class Hero extends Entity {
 		return new Ellipse2D.Double(getX(), getY(), getWidth(), getHeight());
 	}
 
-	public boolean collision(ArrayList<Wall> walls) {
+	public boolean collision(ArrayList<Wall> walls, ArrayList<Entity> doors) {
+		boolean w = false;
+		boolean d = false;
 		for (Wall wall : walls) {
-			if (hitBox().intersects(wall.hitBox()))
-				return true;
+			if (collision(wall.hitBox()))
+				w = true;
 		}
-		return false;
+		for (Entity door : doors) {
+			if (collision(door.hitBox()) && !door.isOn())
+				d = true;
+		}
+		return w || d;
 	}
 
-	public void move(char dir, ArrayList<Wall> walls) {
+	public void move(char dir, ArrayList<Wall> walls, ArrayList<Entity> doors) {
 		if (dir == 'W')
-			setY(getY() - 1);
+			setY(getY() - 2);
 		else if (dir == 'D')
-			setX(getX() + 1);
+			setX(getX() + 2);
 		else if (dir == 'S')
-			setY(getY() + 1);
+			setY(getY() + 2);
 		else if (dir == 'A')
-			setX(getX() - 1);
+			setX(getX() - 2);
 
-		if (collision(walls)) {
+		if (collision(walls, doors)) {
 			if (dir == 'W')
-				setY(getY() + 1);
+				setY(getY() + 2);
 			else if (dir == 'D')
-				setX(getX() - 1);
+				setX(getX() - 2);
 			else if (dir == 'S')
-				setY(getY() - 1);
+				setY(getY() - 2);
 			else if (dir == 'A')
-				setX(getX() + 1);
+				setX(getX() + 2);
 		}
 	}
 }
