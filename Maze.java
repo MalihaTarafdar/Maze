@@ -115,7 +115,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 					gameOn = 0;
 			}
 			try {
-				thread.sleep(3);
+				thread.sleep(5);
 			} catch(InterruptedException e){}
 			repaint();
 		}
@@ -124,11 +124,11 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 	public void keyPressed(KeyEvent e)  {
 		if (e.getKeyCode() == KeyEvent.VK_W)
 			up = true;
-		if (e.getKeyCode() == KeyEvent.VK_D)
+		else if (e.getKeyCode() == KeyEvent.VK_D)
 			right = true;
-		if (e.getKeyCode() == KeyEvent.VK_S)
+		else if (e.getKeyCode() == KeyEvent.VK_S)
 			down = true;
-		if (e.getKeyCode() == KeyEvent.VK_A)
+		else if (e.getKeyCode() == KeyEvent.VK_A)
 			left = true;
 	}
 
