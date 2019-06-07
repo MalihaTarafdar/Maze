@@ -14,13 +14,13 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 
 	private int width = 20;
 	private int height = 20;
+	private int gameOn = 2;
 
 	private JFrame frame;
 	private Hero hero;
 	private Monster monster;
 	private Thread thread;
 
-	private boolean gameOn = true;
 	private boolean right = false;
 	private boolean left = false;
 	private boolean up = false;
@@ -31,7 +31,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		frame.add(this);
 
 		createMaze("Maze1.txt");
-		hero = new Hero(20, 50, width, height, Color.GREEN);
+		hero = new Hero(20, 20, 19, 19, Color.GREEN);
 		monster = new Monster(300, 50, width, height, Color.RED);
 
 		frame.addKeyListener(this);
@@ -53,7 +53,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 			String text;
 			while((text = input.readLine()) != null) {
 				for(int i = 0; i < text.length(); i++) {
-					if(text.charAt(i) == '-')
+					if(text.charAt(i) == '*')
 						walls.add(new Wall(x, y, width, height, Color.BLUE));
 					x += width;
 				}
@@ -85,16 +85,19 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		g2.setColor(monster.getColor());
 		g2.fill(monster.getEllipse());
 
-		if(!gameOn) {
-			g2.setColor(Color.RED);
-			g2.setFont(new Font("Elephant",Font.PLAIN,30));
-			g2.drawString("Game Over",frame.getWidth()/2,frame.getHeight()/2);
+		g2.setColor(Color.RED);
+		g2.setFont(new Font("Helvetica", Font.PLAIN, 30));
+
+		if(gameOn == 1) {
+			g2.drawString("You win!", frame.getWidth()/2, frame.getHeight()/2);
+		} else if (gameOn == 0) {
+			g2.drawString("You lose!", frame.getWidth()/2, frame.getHeight()/2);
 		}
 	}
 
 	public void run() {
 		while(true) {
-			if(gameOn) {
+			if(gameOn == 2) {
 				if(up)
 					hero.move('W', walls);
 				if(right)
@@ -104,16 +107,17 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 				if(left)
 					hero.move('A', walls);
 
+				//System.out.println(hero.collision(walls));
 				//move monster based on time
-				monster.move(1, walls);
+				//monster.move(1, walls);
 
 				if (hero.getX() >= frame.getWidth() || hero.getY() >= frame.getHeight())
-					gameOn = false;
+					gameOn = 1;
 				if (hero.collision(monster.hitBox()))
-					gameOn = false;
+					gameOn = 0;
 			}
 			try {
-				thread.sleep(10);
+				thread.sleep(5);
 			} catch(InterruptedException e){}
 			repaint();
 		}
