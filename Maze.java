@@ -31,8 +31,8 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		frame.add(this);
 
 		createMaze("Maze1.txt");
-		hero = new Hero(20, 20, 19, 19, Color.GREEN);
-		monster = new Monster(300, 50, width, height, Color.RED);
+		hero = new Hero(30, 38, width, height, new Color(35, 140, 15));
+		monster = new Monster(355, 38, width, height, Color.RED);
 
 		frame.addKeyListener(this);
 		frame.setSize(1300,750);
@@ -54,10 +54,10 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 			while((text = input.readLine()) != null) {
 				for(int i = 0; i < text.length(); i++) {
 					if(text.charAt(i) == '*')
-						walls.add(new Wall(x, y, width, height, Color.BLUE));
-					x += width;
+						walls.add(new Wall(x, y, 30, 30, Color.BLUE));
+					x += 30;
 				}
-				y += height;
+				y += 30;
 				x = 0;
 			}
 		}
@@ -75,12 +75,12 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		for(Wall wall : walls) {
 			g2.setColor(wall.getColor());
 			g2.fill(wall.hitBox());
-			g2.setColor(Color.ORANGE);
-			g2.draw(wall.hitBox());
 		}
 
 		g2.setColor(hero.getColor());
 		g2.fill(hero.getEllipse());
+		g2.setColor(Color.ORANGE);
+		g2.draw(hero.getEllipse());
 
 		g2.setColor(monster.getColor());
 		g2.fill(monster.getEllipse());
@@ -107,9 +107,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 				if(left)
 					hero.move('A', walls);
 
-				//System.out.println(hero.collision(walls));
-				//move monster based on time
-				//monster.move(1, walls);
+				monster.move(1, walls);
 
 				if (hero.getX() >= frame.getWidth() || hero.getY() >= frame.getHeight())
 					gameOn = 1;
@@ -117,31 +115,31 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 					gameOn = 0;
 			}
 			try {
-				thread.sleep(5);
+				thread.sleep(3);
 			} catch(InterruptedException e){}
 			repaint();
 		}
 	}
 
 	public void keyPressed(KeyEvent e)  {
-		if(e.getKeyCode() == KeyEvent.VK_W)
+		if (e.getKeyCode() == KeyEvent.VK_W)
 			up = true;
-		if(e.getKeyCode() == KeyEvent.VK_D)
+		if (e.getKeyCode() == KeyEvent.VK_D)
 			right = true;
-		if(e.getKeyCode() == KeyEvent.VK_S)
+		if (e.getKeyCode() == KeyEvent.VK_S)
 			down = true;
-		if(e.getKeyCode() == KeyEvent.VK_A)
+		if (e.getKeyCode() == KeyEvent.VK_A)
 			left = true;
 	}
 
 	public void keyReleased(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_W)
+		if (e.getKeyCode() == KeyEvent.VK_W)
 			up = false;
-		if(e.getKeyCode() == KeyEvent.VK_D)
+		if (e.getKeyCode() == KeyEvent.VK_D)
 			right = false;
-		if(e.getKeyCode() == KeyEvent.VK_S)
+		if (e.getKeyCode() == KeyEvent.VK_S)
 			down = false;
-		if(e.getKeyCode() == KeyEvent.VK_A)
+		if (e.getKeyCode() == KeyEvent.VK_A)
 			left = false;
 	}
 

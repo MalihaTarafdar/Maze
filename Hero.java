@@ -11,6 +11,17 @@ public class Hero extends Entity {
 	public Ellipse2D.Double getEllipse() {
 		return new Ellipse2D.Double(getX(), getY(), getWidth(), getHeight());
 	}
+	public Rectangle hitBox(char dir) {
+		if (dir == 'W')
+			return new Rectangle(getX(), getY() - 2, getWidth(), getHeight());
+		else if (dir == 'D')
+			return new Rectangle(getX() + 2, getY(), getWidth(), getHeight());
+		else if (dir == 'S')
+			return new Rectangle(getX(), getY() + 2, getWidth(), getHeight());
+		else if (dir == 'A')
+			return new Rectangle(getX() - 2, getY(), getWidth(), getHeight());
+		return new Rectangle(getX(), getY(), getWidth(), getHeight());
+	}
 
 	public boolean collision(ArrayList<Wall> walls) {
 		for (Wall wall : walls) {
