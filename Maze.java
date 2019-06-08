@@ -14,7 +14,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 
 	private int width = 20;
 	private int height = 20;
-	private int gameOn = 2;
+	private int gameOn = 3;
 
 	private JFrame frame;
 	private Thread thread;
@@ -136,7 +136,11 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 				g2.drawString("You lose!", frame.getWidth() / 2, frame.getHeight() / 2);
 			}
 		} else {
-			
+			g2.setColor(Color.WHITE);
+			g2.setFont(new Font("Helvetica", Font.BOLD, 50));
+			g2.drawString("MAZE", frame.getWidth() / 2 - 70, frame.getHeight() / 3);
+			g2.setFont(new Font("Helvetica", Font.PLAIN, 30));
+			g2.drawString("Press SPACE to start.", frame.getWidth() / 2 - 140, frame.getHeight() / 3 * 2);
 		}
 	}
 
@@ -195,6 +199,10 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 			down = false;
 		if (e.getKeyCode() == KeyEvent.VK_A)
 			left = false;
+		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+			onMenu = false;
+			gameOn = 2;
+		}
 	}
 
 	public void keyTyped(KeyEvent e) {}
