@@ -5,12 +5,10 @@ import java.awt.*;
 public class Monster extends Entity {
 
 	private int dir;
-	private boolean turn;
 
 	public Monster(int x, int y, int width, int height, Color color) {
 		super(x, y, width, height, color);
 		dir = 1;
-		turn = true;
 	}
 
 	public Ellipse2D.Double getEllipse() {
@@ -51,16 +49,9 @@ public class Monster extends Entity {
 			else if (dir == 3)
 				setX(getX() + 1);
 
-			if (turn) {
-				dir++;
-				if (dir == 4)
-					dir = 0;
-			} else {
-				dir--;
-				if (dir < 0)
-					dir = 4;
-			}
-			//turn = !turn;
+			dir++;
+			if (dir == 4)
+				dir = 0;
 
 			if (dir == 0)
 				setY(getY() - 1);

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 public class Maze extends JPanel implements KeyListener, Runnable {
 	private ArrayList<Wall> walls;
-	private ArrayList<Monster> monsters;
 	private ArrayList<Entity> doors;
 	private ArrayList<Entity> switches;
 	private ArrayList<Integer> switchDoorNumbers;
@@ -18,23 +17,25 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 	private int gameOn = 2;
 
 	private JFrame frame;
+	private Thread thread;
 	private Hero hero;
 	private Monster monster;
-	private Thread thread;
 	private Entity end;
+	private Entity start;
 
 	private boolean right = false;
 	private boolean left = false;
 	private boolean up = false;
 	private boolean down = false;
+	private boolean onMenu = true;
 
 	public Maze() {
 		frame = new JFrame("Maze");
 		frame.add(this);
 
-		createMaze("Maze1.txt");
 		hero = new Hero(100, 38, width, height, Color.GREEN);
 		monster = new Monster(5, 38, width, height, Color.RED);
+		createMaze("Maze1.txt");
 
 		frame.addKeyListener(this);
 		frame.setSize(1300, 750);
@@ -48,8 +49,9 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		walls = new ArrayList<Wall>();
 		doors = new ArrayList<Entity>();
 		switches = new ArrayList<Entity>();
-		end = new Entity(frame.getWidth(), frame.getHeight(), 30, 30, Color.MAGENTA);
 		switchDoorNumbers = new ArrayList<Integer>();
+		end = new Entity(frame.getWidth(), frame.getHeight(), width, height, Color.MAGENTA);
+		start = new Entity(0, 0, width, height, Color.ORANGE);
 
 		File name = new File(fileName);
 
@@ -73,7 +75,15 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 						switchDoorNumbers.add(Character.getNumericValue(text.charAt(i)));
 					}
 
-					if (text.charAt(i) == 'E') {
+					if (c == 'S') {
+						hero.setX(x + width / 2);
+						hero.setY(y + height / 2);
+					}
+					if (c == 'M') {
+						monster.setX(x + width / 2);
+						monster.setY(y + height / 2);
+					}
+					if (c == 'E') {
 						end.setX(x);
 						end.setY(y);
 					}
@@ -95,34 +105,38 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		g2.setColor(Color.BLACK);
 		g2.fillRect(0,0,frame.getWidth(),frame.getHeight());
 
-		for(Wall wall : walls) {
-			g2.setColor(wall.getColor());
-			g2.fill(wall.hitBox());
-		}
-		for (Entity s : switches) {
-			g2.setColor(s.getColor());
-			if (!s.isOn())
-				g2.fill(s.hitBox());
-		}
-		for (Entity door : doors) {
-			g2.setColor(door.getColor());
-			if (!door.isOn())
-				g2.fill(door.hitBox());
-		}
+		if (!onMenu) {
+			for(Wall wall : walls) {
+				g2.setColor(wall.getColor());
+				g2.fill(wall.hitBox());
+			}
+			for (Entity s : switches) {
+				g2.setColor(s.getColor());
+				if (!s.isOn())
+					g2.fill(s.hitBox());
+			}
+			for (Entity door : doors) {
+				g2.setColor(door.getColor());
+				if (!door.isOn())
+					g2.fill(door.hitBox());
+			}
 
-		g2.setColor(hero.getColor());
-		g2.fill(hero.getEllipse());
+			g2.setColor(hero.getColor());
+			g2.fill(hero.getEllipse());
 
-		g2.setColor(monster.getColor());
-		g2.fill(monster.getEllipse());
+			g2.setColor(monster.getColor());
+			g2.fill(monster.getEllipse());
 
-		g2.setColor(Color.RED);
-		g2.setFont(new Font("Helvetica", Font.PLAIN, 30));
+			g2.setColor(Color.RED);
+			g2.setFont(new Font("Helvetica", Font.PLAIN, 30));
 
-		if(gameOn == 1) {
-			g2.drawString("You win!", frame.getWidth()/2, frame.getHeight()/2);
-		} else if (gameOn == 0) {
-			g2.drawString("You lose!", frame.getWidth()/2, frame.getHeight()/2);
+			if(gameOn == 1) {
+				g2.drawString("You win!", frame.getWidth() / 2, frame.getHeight() / 2);
+			} else if (gameOn == 0) {
+				g2.drawString("You lose!", frame.getWidth() / 2, frame.getHeight() / 2);
+			}
+		} else {
+			
 		}
 	}
 
@@ -138,7 +152,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 				if(left)
 					hero.move('A', walls, doors);
 
-				//monster.move(walls, doors);
+				monster.move(walls, doors);
 
 				for (int i = 0; i < switches.size(); i++) {
 					if (!switches.get(i).isOn() && hero.collision(switches.get(i).hitBox())) {
