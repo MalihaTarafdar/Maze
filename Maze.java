@@ -12,8 +12,10 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 
 	private String[] mazes = {"Maze1", "Maze2", "Maze3"};
 
-	private int width = 20;
-	private int height = 20;
+	private int entityWidth = 20;
+	private int entityHeight = 20;
+	private int wallWidth = 30;
+	private int wallHeight = 30;
 	private int gameOn = 3;
 
 	private JFrame frame;
@@ -33,8 +35,8 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		frame = new JFrame("Maze");
 		frame.add(this);
 
-		hero = new Hero(100, 38, width, height, Color.GREEN);
-		monster = new Monster(5, 38, width, height, Color.RED);
+		hero = new Hero(0, -10, entityWidth, entityHeight, Color.GREEN);
+		monster = new Monster(0, -5, entityWidth, entityHeight, Color.RED, 1);
 		createMaze("Maze1.txt");
 
 		frame.addKeyListener(this);
@@ -50,8 +52,8 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		doors = new ArrayList<Entity>();
 		switches = new ArrayList<Entity>();
 		switchDoorNumbers = new ArrayList<Integer>();
-		end = new Entity(frame.getWidth(), frame.getHeight(), width, height, Color.MAGENTA);
-		start = new Entity(0, 0, width, height, Color.ORANGE);
+		end = new Entity(frame.getWidth(), frame.getHeight(), entityWidth, entityHeight, Color.MAGENTA);
+		start = new Entity(0, 0, entityWidth, entityHeight, Color.ORANGE);
 
 		File name = new File(fileName);
 
@@ -65,10 +67,10 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 					char c = text.charAt(i);
 
 					if(c == '*')
-						walls.add(new Wall(x, y, 30, 30, Color.BLUE));
+						walls.add(new Wall(x, y, wallWidth, wallHeight, Color.BLUE));
 
 					if (c == '-')
-						doors.add(new Entity(x, y, 30, 30, Color.GRAY));
+						doors.add(new Entity(x, y, wallWidth, wallHeight, Color.GRAY));
 
 					if (c >= 48 && c <= 57) {
 						switches.add(new Entity(x + 10, y + 10, 10, 10, Color.YELLOW));
@@ -76,21 +78,21 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 					}
 
 					if (c == 'S') {
-						hero.setX(x + width / 2);
-						hero.setY(y + height / 2);
+						hero.setX(x + entityWidth / 2);
+						hero.setY(y + entityHeight / 2);
 					}
 					if (c == 'M') {
-						monster.setX(x + width / 2);
-						monster.setY(y + height / 2);
+						monster.setX(x + entityWidth / 2);
+						monster.setY(y + entityHeight / 2);
 					}
 					if (c == 'E') {
 						end.setX(x);
 						end.setY(y);
 					}
 
-					x += 30;
+					x += wallWidth;
 				}
-				y += 30;
+				y += wallHeight;
 				x = 0;
 			}
 		}

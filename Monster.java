@@ -6,9 +6,9 @@ public class Monster extends Entity {
 
 	private int dir;
 
-	public Monster(int x, int y, int width, int height, Color color) {
+	public Monster(int x, int y, int width, int height, Color color, int dir) {
 		super(x, y, width, height, color);
-		dir = 1;
+		this.dir = dir;
 	}
 
 	public Ellipse2D.Double getEllipse() {
@@ -62,5 +62,12 @@ public class Monster extends Entity {
 			else if (dir == 3)
 				setX(getX() - 1);
 		}
+	}
+
+	public void setDir(int dir) {
+		this.dir = dir;
+	}
+	public int getDir() {
+		return dir;
 	}
 }
