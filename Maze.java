@@ -10,6 +10,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 	private ArrayList<Entity> doors;
 	private ArrayList<Entity> switches;
 	private ArrayList<Entity> monsterPath;
+	private ArrayList<Integer> switchDoorNumbers;
 
 	private String[] mazes = {"Maze1","Maze2","Maze3"};
 
@@ -34,7 +35,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 
 		createMaze("Maze1.txt");
 		hero = new Hero(100, 38, width, height, Color.GREEN);
-		monster = new Monster(10, 38, width, height, Color.RED);
+		monster = new Monster(5, 38, width, height, Color.RED);
 
 		frame.addKeyListener(this);
 		frame.setSize(1300,750);
@@ -50,6 +51,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		switches = new ArrayList<Entity>();
 		monsterPath = new ArrayList<Entity>();
 		end = new Entity(frame.getWidth(), frame.getHeight(), 30, 30, Color.MAGENTA);
+		switchDoorNumbers = new ArrayList<Integer>();
 
 		File name = new File(fileName);
 
@@ -62,12 +64,15 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 				for(int i = 0; i < text.length(); i++) {
 					if(text.charAt(i) == '*')
 						walls.add(new Wall(x, y, 30, 30, Color.BLUE));
+
 					if (text.charAt(i) == '-')
 						doors.add(new Entity(x, y, 30, 30, Color.GRAY));
-					if (text.charAt(i) == 'X')
+
+					if (Character.getNumericValue(text.charAt(i)) != -1) {
 						switches.add(new Entity(x + 10, y + 10, 10, 10, Color.YELLOW));
-					if (text.charAt(i) == ' ')
-						monsterPath.add(new Entity(x + 15, y + 15, 5, 5, Color.RED));
+						switchDoorNumbers.add(Character.getNumericValue(text.charAt(i)));
+					}
+
 					if (text.charAt(i) == 'E') {
 						end.setX(x);
 						end.setY(y);
@@ -104,9 +109,6 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 			if (!door.isOn())
 				g2.fill(door.hitBox());
 		}
-		for (Entity path : monsterPath) {
-
-		}
 
 		g2.setColor(hero.getColor());
 		g2.fill(hero.getEllipse());
@@ -136,7 +138,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 				if(left)
 					hero.move('A', walls, doors);
 
-				//monster.move(monsterPath);
+				monster.move(walls, doors);
 
 				if (!switches.get(0).isOn() && hero.collision(switches.get(0).hitBox())) {
 					doors.get(3).setState(true);
