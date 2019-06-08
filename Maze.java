@@ -4,7 +4,7 @@ import java.io.*;
 import javax.swing.*;
 import java.util.ArrayList;
 
-public class Maze extends JPanel implements KeyListener, Runnable {
+public class Maze extends JPanel implements KeyListener, MouseListener, Runnable {
 	private ArrayList<Wall> walls;
 	private ArrayList<Entity> doors;
 	private ArrayList<Entity> switches;
@@ -29,7 +29,8 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 	private boolean left = false;
 	private boolean up = false;
 	private boolean down = false;
-	private boolean onMenu = true;
+	private boolean onStart = true;
+	private boolean onMapChoice = false;
 
 	public Maze() {
 		frame = new JFrame("Maze");
@@ -107,7 +108,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		g2.setColor(Color.BLACK);
 		g2.fillRect(0,0,frame.getWidth(),frame.getHeight());
 
-		if (!onMenu) {
+		if (!onStart) {
 			for(Wall wall : walls) {
 				g2.setColor(wall.getColor());
 				g2.fill(wall.hitBox());
@@ -191,7 +192,6 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		else if (e.getKeyCode() == KeyEvent.VK_A)
 			left = true;
 	}
-
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_W)
 			up = false;
@@ -202,12 +202,19 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		if (e.getKeyCode() == KeyEvent.VK_A)
 			left = false;
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-			onMenu = false;
+			onStart = false;
 			gameOn = 2;
 		}
 	}
-
 	public void keyTyped(KeyEvent e) {}
+
+	public void mouseExited(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {
+		
+	}
+	public void mousePressed(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {}
 
 	public static void main(String[] args) {
 		Maze app = new Maze();
