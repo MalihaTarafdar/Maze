@@ -9,10 +9,9 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 	private ArrayList<Monster> monsters;
 	private ArrayList<Entity> doors;
 	private ArrayList<Entity> switches;
-	private ArrayList<Entity> monsterPath;
 	private ArrayList<Integer> switchDoorNumbers;
 
-	private String[] mazes = {"Maze1","Maze2","Maze3"};
+	private String[] mazes = {"Maze1", "Maze2", "Maze3"};
 
 	private int width = 20;
 	private int height = 20;
@@ -38,7 +37,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		monster = new Monster(5, 38, width, height, Color.RED);
 
 		frame.addKeyListener(this);
-		frame.setSize(1300,750);
+		frame.setSize(1300, 750);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		thread = new Thread(this);
@@ -49,7 +48,6 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		walls = new ArrayList<Wall>();
 		doors = new ArrayList<Entity>();
 		switches = new ArrayList<Entity>();
-		monsterPath = new ArrayList<Entity>();
 		end = new Entity(frame.getWidth(), frame.getHeight(), 30, 30, Color.MAGENTA);
 		switchDoorNumbers = new ArrayList<Integer>();
 
@@ -62,13 +60,15 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 			String text;
 			while((text = input.readLine()) != null) {
 				for(int i = 0; i < text.length(); i++) {
-					if(text.charAt(i) == '*')
+					char c = text.charAt(i);
+
+					if(c == '*')
 						walls.add(new Wall(x, y, 30, 30, Color.BLUE));
 
-					if (text.charAt(i) == '-')
+					if (c == '-')
 						doors.add(new Entity(x, y, 30, 30, Color.GRAY));
 
-					if (Character.getNumericValue(text.charAt(i)) != -1) {
+					if (c >= 48 && c <= 57) {
 						switches.add(new Entity(x + 10, y + 10, 10, 10, Color.YELLOW));
 						switchDoorNumbers.add(Character.getNumericValue(text.charAt(i)));
 					}
@@ -138,31 +138,25 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 				if(left)
 					hero.move('A', walls, doors);
 
-				monster.move(walls, doors);
+				//monster.move(walls, doors);
 
-				if (!switches.get(0).isOn() && hero.collision(switches.get(0).hitBox())) {
-					doors.get(3).setState(true);
-					switches.get(0).setState(true);
-				} else if (!switches.get(1).isOn() && hero.collision(switches.get(1).hitBox())) {
-					doors.get(0).setState(true);
-					switches.get(1).setState(true);
-				} else if (!switches.get(2).isOn() && hero.collision(switches.get(2).hitBox())) {
-					doors.get(2).setState(true);
-					switches.get(2).setState(true);
-				} else if (!switches.get(3).isOn() && hero.collision(switches.get(3).hitBox())) {
-					doors.get(1).setState(true);
-					switches.get(3).setState(true);
+				for (int i = 0; i < switches.size(); i++) {
+					if (!switches.get(i).isOn() && hero.collision(switches.get(i).hitBox())) {
+						doors.get(switchDoorNumbers.get(i)).setState(true);
+						switches.get(i).setState(true);
+					}
 				}
-
 
 				if (hero.collision(end.hitBox()))
 					gameOn = 1;
 				if (hero.collision(monster.hitBox()))
 					gameOn = 0;
 			}
+
 			try {
 				thread.sleep(6);
 			} catch(InterruptedException e){}
+
 			repaint();
 		}
 	}
