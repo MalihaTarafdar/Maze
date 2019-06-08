@@ -29,7 +29,7 @@ public class Monster extends Entity {
 		return w || d;
 	}
 
-	public void move(ArrayList<Wall> walls, ArrayList<Entity> doors) {
+	public void changePos() {
 		if (dir == 0)
 			setY(getY() - 1);
 		else if (dir == 1)
@@ -38,29 +38,29 @@ public class Monster extends Entity {
 			setY(getY() + 1);
 		else if (dir == 3)
 			setX(getX() - 1);
+	}
+	public void reversePos() {
+		if (dir == 0)
+			setY(getY() + 1);
+		else if (dir == 1)
+			setX(getX() - 1);
+		else if (dir == 2)
+			setY(getY() - 1);
+		else if (dir == 3)
+			setX(getX() + 1);
+	}
+
+	public void move(ArrayList<Wall> walls, ArrayList<Entity> doors) {
+		changePos();
 
 		while (collision(walls, doors)) {
-			if (dir == 0)
-				setY(getY() + 1);
-			else if (dir == 1)
-				setX(getX() - 1);
-			else if (dir == 2)
-				setY(getY() - 1);
-			else if (dir == 3)
-				setX(getX() + 1);
+			reversePos();
 
 			dir++;
 			if (dir == 4)
 				dir = 0;
 
-			if (dir == 0)
-				setY(getY() - 1);
-			else if (dir == 1)
-				setX(getX() + 1);
-			else if (dir == 2)
-				setY(getY() + 1);
-			else if (dir == 3)
-				setX(getX() - 1);
+			changePos();
 		}
 	}
 

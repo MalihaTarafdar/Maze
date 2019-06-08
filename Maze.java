@@ -38,7 +38,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 
 		hero = new Hero(0, 0, entityWidth, entityHeight, Color.GREEN);
 		monster = new Monster(0, 0, entityWidth, entityHeight, Color.RED, 1);
-		createMaze("Maze3.txt");
+		createMaze("Maze1.txt");
 
 		frame.addKeyListener(this);
 		frame.setSize(1300, 750);
@@ -106,7 +106,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setColor(Color.BLACK);
-		g2.fillRect(0,0,frame.getWidth(),frame.getHeight());
+		g2.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 
 		if (!onStart) {
 			for(Wall wall : walls) {
@@ -175,7 +175,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 			}
 
 			try {
-				thread.sleep(6);
+				thread.sleep(5);
 			} catch(InterruptedException e){}
 
 			repaint();
