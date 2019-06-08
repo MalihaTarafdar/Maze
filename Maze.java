@@ -2,7 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Maze extends JPanel implements KeyListener, MouseListener, Runnable {
 	private ArrayList<Wall> walls;
@@ -39,6 +39,8 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		hero = new Hero(0, 0, entityWidth, entityHeight, Color.GREEN);
 		monster = new Monster(0, 0, entityWidth, entityHeight, Color.RED, 1);
 		createMaze("Maze1.txt");
+		onStart = false;
+		gameOn = 2;
 
 		frame.addKeyListener(this);
 		frame.setSize(1300, 750);
@@ -175,7 +177,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 			}
 
 			try {
-				thread.sleep(5);
+				Thread.sleep(5);
 			} catch(InterruptedException e){}
 
 			repaint();
