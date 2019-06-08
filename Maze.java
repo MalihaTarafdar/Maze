@@ -35,9 +35,9 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 		frame = new JFrame("Maze");
 		frame.add(this);
 
-		hero = new Hero(0, -10, entityWidth, entityHeight, Color.GREEN);
-		monster = new Monster(0, -5, entityWidth, entityHeight, Color.RED, 1);
-		createMaze("Maze1.txt");
+		hero = new Hero(0, 0, entityWidth, entityHeight, Color.GREEN);
+		monster = new Monster(0, 0, entityWidth, entityHeight, Color.RED, 1);
+		createMaze("Maze2.txt");
 
 		frame.addKeyListener(this);
 		frame.setSize(1300, 750);
