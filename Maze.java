@@ -38,7 +38,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 
 		hero = new Hero(0, 0, entityWidth, entityHeight, Color.GREEN);
 		monster = new Monster(0, 0, entityWidth, entityHeight, Color.RED, 1);
-		createMaze("Maze2.txt");
+		createMaze("Maze3.txt");
 
 		frame.addKeyListener(this);
 		frame.setSize(1300, 750);
@@ -211,7 +211,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 	public void mouseExited(MouseEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseReleased(MouseEvent e) {
-		
+
 	}
 	public void mousePressed(MouseEvent e) {}
 	public void mouseClicked(MouseEvent e) {}
