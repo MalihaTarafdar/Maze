@@ -5,6 +5,8 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 public class Maze extends JPanel implements KeyListener, MouseListener, Runnable {
+	private static final long serialVersionUID = 42l;
+
 	private ArrayList<Wall> walls;
 	private ArrayList<Entity> doors;
 	private ArrayList<Entity> switches;
@@ -19,7 +21,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 	private int wallWidth = 30;
 	private int wallHeight = 30;
 	private int gameOn = 3;
-	private int rand = 0;
+	private int randPortal = 0;
 
 	private JFrame frame;
 	private Thread thread;
@@ -28,12 +30,12 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 	private Monster monster;
 	private Entity end;
 	private Entity start;
+	private Menu menu;
 
 	private boolean right = false;
 	private boolean left = false;
 	private boolean up = false;
 	private boolean down = false;
-	private boolean onStart = true;
 	private boolean teleported = false;
 
 	public Maze() {
@@ -42,6 +44,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 
 		hero1 = new Hero(0, 0, entityWidth, entityHeight, Color.GREEN);
 		createMaze("Maze2.txt");
+		menu = new Menu();
 
 		frame.addKeyListener(this);
 		frame.setSize(1300, 750);
@@ -113,7 +116,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		g2.setColor(Color.BLACK);
 		g2.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 
-		if (!onStart) {
+		if (!menu.isOnScreen()) {
 			for(Wall wall : walls) {
 				g2.setColor(wall.getColor());
 				g2.fill(wall.hitBox());
@@ -192,15 +195,15 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 					if (hero1.collision(portals.get(i).hitBox()) && portals.get(i).isOn()) {
 						if (count > 1 && !teleported) {
 							do {
-								rand = (int)(Math.random() * portals.size());
-							} while (hero1.collision(portals.get(rand).hitBox()) || !portals.get(rand).isOn());
-							hero1.setX(portals.get(rand).getX());
-							hero1.setY(portals.get(rand).getY());
+								randPortal = (int)(Math.random() * portals.size());
+							} while (hero1.collision(portals.get(randPortal).hitBox()) || !portals.get(randPortal).isOn());
+							hero1.setX(portals.get(randPortal).getX());
+							hero1.setY(portals.get(randPortal).getY());
 							teleported = true;
 						}
 					}
 				}
-				if (!hero1.collision(portals.get(rand).hitBox()))
+				if (!hero1.collision(portals.get(randPortal).hitBox()))
 					teleported = false;
 
 				if (hero1.collision(end.hitBox()))
@@ -239,7 +242,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		if (e.getKeyCode() == KeyEvent.VK_A)
 			left = false;
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-			onStart = false;
+			menu.setOnScreen(false);
 			gameOn = 2;
 		}
 	}
