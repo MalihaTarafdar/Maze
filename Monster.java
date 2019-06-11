@@ -15,18 +15,24 @@ public class Monster extends Entity {
 		return new Ellipse2D.Double(getX(), getY(), getWidth(), getHeight());
 	}
 
-	public boolean collision(ArrayList<Wall> walls, ArrayList<Entity> doors) {
+	public boolean collision(ArrayList<Wall> walls, ArrayList<Entity> doors, ArrayList<Monster> monsters) {
 		boolean w = false;
 		boolean d = false;
+		boolean m = false;
+
 		for (Wall wall : walls) {
 			if (collision(wall.hitBox()))
 				w = true;
+		}
+		for (Monster monster : monsters) {
+			if (collision(monster.hitBox()) && this != monster)
+				m = true;
 		}
 		for (Entity door : doors) {
 			if (collision(door.hitBox()) && !door.isOn())
 				d = true;
 		}
-		return w || d;
+		return w || d || m;
 	}
 
 	public void changePos() {
@@ -50,10 +56,10 @@ public class Monster extends Entity {
 			setX(getX() + 1);
 	}
 
-	public void move(ArrayList<Wall> walls, ArrayList<Entity> doors) {
+	public void move(ArrayList<Wall> walls, ArrayList<Entity> doors, ArrayList<Monster> monsters) {
 		changePos();
 		int i = 0;
-		while (collision(walls, doors)) {
+		while (collision(walls, doors, monsters)) {
 			reversePos();
 
 			dir = (int)(Math.random() * 4);

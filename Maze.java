@@ -92,7 +92,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 						hero1.setY(y + entityHeight / 2);
 					}
 					if (c == 'M') {
-						monsters.add(new Monster(x + entityWidth / 2, y + entityHeight / 2, entityWidth, entityHeight, Color.RED, 0));
+						monsters.add(new Monster(x + entityWidth / 2, y + entityHeight / 2, entityWidth, entityHeight, Color.RED, 1));
 					}
 					if (c == 'E') {
 						end.setX(x);
@@ -175,7 +175,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 					hero1.move('A', walls, doors);
 
 				for (Monster m : monsters)
-					m.move(walls, doors);
+					m.move(walls, doors, monsters);
 
 				for (int i = 0; i < switches.size(); i++) {
 					if (!switches.get(i).isOn() && hero1.collision(switches.get(i).hitBox())) {
@@ -186,13 +186,13 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 						portals.get(i).setState(true);
 				}
 
-				int count = 0;
-				for (Entity p : portals) {
-					if (p.isOn())
-						count++;
-				}
 				for (int i = 0; i < portals.size(); i++) {
 					if (hero1.collision(portals.get(i).hitBox()) && portals.get(i).isOn()) {
+						int count = 0;
+						for (Entity p : portals) {
+							if (p.isOn())
+								count++;
+						}
 						if (count > 1 && !teleported) {
 							do {
 								randPortal = (int)(Math.random() * portals.size());
