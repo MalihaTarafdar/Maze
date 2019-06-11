@@ -2,12 +2,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
 
 public class Maze extends JPanel implements KeyListener, MouseListener, Runnable {
 	private ArrayList<Wall> walls;
 	private ArrayList<Entity> doors;
 	private ArrayList<Entity> switches;
+	private ArrayList<Entity> portals;
+	private ArrayList<Monster> monsters;
 	private ArrayList<Integer> switchDoorNumbers;
 
 	private String[] mazes = {"Maze1", "Maze2", "Maze3"};
@@ -17,10 +19,12 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 	private int wallWidth = 30;
 	private int wallHeight = 30;
 	private int gameOn = 3;
+	private int rand = 0;
 
 	private JFrame frame;
 	private Thread thread;
-	private Hero hero;
+	private Hero hero1;
+	private Hero hero2;
 	private Monster monster;
 	private Entity end;
 	private Entity start;
@@ -30,17 +34,14 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 	private boolean up = false;
 	private boolean down = false;
 	private boolean onStart = true;
-	private boolean onMapChoice = false;
+	private boolean teleported = false;
 
 	public Maze() {
 		frame = new JFrame("Maze");
 		frame.add(this);
 
-		hero = new Hero(0, 0, entityWidth, entityHeight, Color.GREEN);
-		monster = new Monster(0, 0, entityWidth, entityHeight, Color.RED, 1);
-		createMaze("Maze1.txt");
-		onStart = false;
-		gameOn = 2;
+		hero1 = new Hero(0, 0, entityWidth, entityHeight, Color.GREEN);
+		createMaze("Maze2.txt");
 
 		frame.addKeyListener(this);
 		frame.setSize(1300, 750);
@@ -54,6 +55,8 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		walls = new ArrayList<Wall>();
 		doors = new ArrayList<Entity>();
 		switches = new ArrayList<Entity>();
+		portals = new ArrayList<Entity>();
+		monsters = new ArrayList<Monster>();
 		switchDoorNumbers = new ArrayList<Integer>();
 		end = new Entity(frame.getWidth(), frame.getHeight(), entityWidth, entityHeight, Color.MAGENTA);
 		start = new Entity(0, 0, entityWidth, entityHeight, Color.ORANGE);
@@ -78,15 +81,15 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 					if (c >= 48 && c <= 57) {
 						switches.add(new Entity(x + 10, y + 10, 10, 10, Color.YELLOW));
 						switchDoorNumbers.add(Character.getNumericValue(text.charAt(i)));
+						portals.add(new Entity(x + 10, y + 10, 15, 15, Color.MAGENTA));
 					}
 
 					if (c == 'S') {
-						hero.setX(x + entityWidth / 2);
-						hero.setY(y + entityHeight / 2);
+						hero1.setX(x + entityWidth / 2);
+						hero1.setY(y + entityHeight / 2);
 					}
 					if (c == 'M') {
-						monster.setX(x + entityWidth / 2);
-						monster.setY(y + entityHeight / 2);
+						monsters.add(new Monster(x + entityWidth / 2, y + entityHeight / 2, entityWidth, entityHeight, Color.RED, 0));
 					}
 					if (c == 'E') {
 						end.setX(x);
@@ -125,27 +128,34 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				if (!door.isOn())
 					g2.fill(door.hitBox());
 			}
+			for (Entity p : portals) {
+				g2.setColor(p.getColor());
+				if (p.isOn())
+					g2.draw(p.hitBox());
+			}
 
-			g2.setColor(hero.getColor());
-			g2.fill(hero.getEllipse());
+			g2.setColor(hero1.getColor());
+			g2.fill(hero1.getEllipse());
 
-			g2.setColor(monster.getColor());
-			g2.fill(monster.getEllipse());
+			for (Monster m : monsters) {
+				g2.setColor(m.getColor());
+				g2.fill(m.getEllipse());
+			}
 
 			g2.setColor(Color.RED);
-			g2.setFont(new Font("Helvetica", Font.PLAIN, 30));
+			g2.setFont(new Font("Helvetica", Font.PLAIN, 50));
 
 			if(gameOn == 1) {
-				g2.drawString("You win!", frame.getWidth() / 2, frame.getHeight() / 2);
+				g2.drawString("You win!", frame.getWidth() / 2 - 100, frame.getHeight() / 2);
 			} else if (gameOn == 0) {
-				g2.drawString("You lose!", frame.getWidth() / 2, frame.getHeight() / 2);
+				g2.drawString("You lose!", frame.getWidth() / 2 - 100, frame.getHeight() / 2);
 			}
 		} else {
 			g2.setColor(Color.WHITE);
 			g2.setFont(new Font("Helvetica", Font.BOLD, 50));
 			g2.drawString("MAZE", frame.getWidth() / 2 - 70, frame.getHeight() / 3);
 			g2.setFont(new Font("Helvetica", Font.PLAIN, 30));
-			g2.drawString("Press SPACE to start.", frame.getWidth() / 2 - 140, frame.getHeight() / 3 * 2);
+			g2.drawString("Press SPACE to start", frame.getWidth() / 2 - 140, frame.getHeight() / 2);
 		}
 	}
 
@@ -153,31 +163,56 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		while(true) {
 			if(gameOn == 2) {
 				if(up)
-					hero.move('W', walls, doors);
+					hero1.move('W', walls, doors);
 				if(right)
-					hero.move('D', walls, doors);
+					hero1.move('D', walls, doors);
 				if(down)
-					hero.move('S', walls, doors);
+					hero1.move('S', walls, doors);
 				if(left)
-					hero.move('A', walls, doors);
+					hero1.move('A', walls, doors);
 
-				monster.move(walls, doors);
+				for (Monster m : monsters)
+					m.move(walls, doors);
 
 				for (int i = 0; i < switches.size(); i++) {
-					if (!switches.get(i).isOn() && hero.collision(switches.get(i).hitBox())) {
+					if (!switches.get(i).isOn() && hero1.collision(switches.get(i).hitBox())) {
 						doors.get(switchDoorNumbers.get(i)).setState(true);
 						switches.get(i).setState(true);
 					}
+					if (!hero1.collision(portals.get(i).hitBox()) && switches.get(i).isOn())
+						portals.get(i).setState(true);
 				}
 
-				if (hero.collision(end.hitBox()))
+				int count = 0;
+				for (Entity p : portals) {
+					if (p.isOn())
+						count++;
+				}
+				for (int i = 0; i < portals.size(); i++) {
+					if (hero1.collision(portals.get(i).hitBox()) && portals.get(i).isOn()) {
+						if (count > 1 && !teleported) {
+							do {
+								rand = (int)(Math.random() * portals.size());
+							} while (hero1.collision(portals.get(rand).hitBox()) || !portals.get(rand).isOn());
+							hero1.setX(portals.get(rand).getX());
+							hero1.setY(portals.get(rand).getY());
+							teleported = true;
+						}
+					}
+				}
+				if (!hero1.collision(portals.get(rand).hitBox()))
+					teleported = false;
+
+				if (hero1.collision(end.hitBox()))
 					gameOn = 1;
-				if (hero.collision(monster.hitBox()))
-					gameOn = 0;
+				for (Monster m : monsters) {
+					if (hero1.collision(m.hitBox()))
+						gameOn = 0;
+				}
 			}
 
 			try {
-				Thread.sleep(5);
+				Thread.sleep(6);
 			} catch(InterruptedException e){}
 
 			repaint();

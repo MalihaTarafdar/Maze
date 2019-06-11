@@ -28,23 +28,23 @@ public class Hero extends Entity {
 
 	public void move(char dir, ArrayList<Wall> walls, ArrayList<Entity> doors) {
 		if (dir == 'W')
-			setY(getY() - 1);
+			setY(getY() - 2);
 		else if (dir == 'D')
-			setX(getX() + 1);
+			setX(getX() + 2);
 		else if (dir == 'S')
-			setY(getY() + 1);
+			setY(getY() + 2);
 		else if (dir == 'A')
-			setX(getX() - 1);
+			setX(getX() - 2);
 
 		if (collision(walls, doors)) {
 			if (dir == 'W')
-				setY(getY() + 1);
+				setY(getY() + 2);
 			else if (dir == 'D')
-				setX(getX() - 1);
+				setX(getX() - 2);
 			else if (dir == 'S')
-				setY(getY() - 1);
+				setY(getY() - 2);
 			else if (dir == 'A')
-				setX(getX() + 1);
+				setX(getX() + 2);
 		}
 	}
 }

@@ -52,15 +52,14 @@ public class Monster extends Entity {
 
 	public void move(ArrayList<Wall> walls, ArrayList<Entity> doors) {
 		changePos();
-
+		int i = 0;
 		while (collision(walls, doors)) {
 			reversePos();
 
-			dir++;
-			if (dir == 4)
-				dir = 0;
+			dir = (int)(Math.random() * 4);
 
 			changePos();
+			i++;
 		}
 	}
 
