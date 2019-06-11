@@ -22,6 +22,8 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 	private int wallHeight = 30;
 	private int gameOn = 3;
 	private int randPortal = 0;
+	private int tick = 3;
+	private double count = 0;
 
 	private JFrame frame;
 	private Thread thread;
@@ -174,8 +176,10 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				if(left)
 					hero1.move('A', walls, doors);
 
-				for (Monster m : monsters)
-					m.move(walls, doors, monsters);
+				for (Monster m : monsters) {
+					if (count % 2 == 0)
+						m.move(walls, doors, monsters);
+				}
 
 				for (int i = 0; i < switches.size(); i++) {
 					if (!switches.get(i).isOn() && hero1.collision(switches.get(i).hitBox())) {
@@ -186,25 +190,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 						portals.get(i).setState(true);
 				}
 
-				for (int i = 0; i < portals.size(); i++) {
-					if (hero1.collision(portals.get(i).hitBox()) && portals.get(i).isOn()) {
-						int count = 0;
-						for (Entity p : portals) {
-							if (p.isOn())
-								count++;
-						}
-						if (count > 1 && !teleported) {
-							do {
-								randPortal = (int)(Math.random() * portals.size());
-							} while (hero1.collision(portals.get(randPortal).hitBox()) || !portals.get(randPortal).isOn());
-							hero1.setX(portals.get(randPortal).getX());
-							hero1.setY(portals.get(randPortal).getY());
-							teleported = true;
-						}
-					}
-				}
-				if (!hero1.collision(portals.get(randPortal).hitBox()))
-					teleported = false;
+				teleport();
 
 				if (hero1.collision(end.hitBox()))
 					gameOn = 1;
@@ -214,12 +200,35 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				}
 			}
 
+			count += tick;
 			try {
-				Thread.sleep(6);
+				Thread.sleep(tick);
 			} catch(InterruptedException e){}
 
 			repaint();
 		}
+	}
+
+	public void teleport() {
+		for (int i = 0; i < portals.size(); i++) {
+			if (hero1.collision(portals.get(i).hitBox()) && portals.get(i).isOn()) {
+				int numOpenPortals = 0;
+				for (Entity p : portals) {
+					if (p.isOn())
+						numOpenPortals++;
+				}
+				if (numOpenPortals > 1 && !teleported) {
+					do {
+						randPortal = (int)(Math.random() * portals.size());
+					} while (hero1.collision(portals.get(randPortal).hitBox()) || !portals.get(randPortal).isOn());
+					hero1.setX(portals.get(randPortal).getX());
+					hero1.setY(portals.get(randPortal).getY());
+					teleported = true;
+				}
+			}
+		}
+		if (!hero1.collision(portals.get(randPortal).hitBox()))
+			teleported = false;
 	}
 
 	public void keyPressed(KeyEvent e)  {
