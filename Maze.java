@@ -32,6 +32,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 	private Entity end;
 	private Entity start;
 	private Menu menu;
+	private String maze;
 
 	private boolean right = false;
 	private boolean left = false;
@@ -44,7 +45,8 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		frame.add(this);
 
 		hero = new Hero(0, 0, entityWidth, entityHeight, Color.GREEN);
-		createMaze("Maze2.txt");
+		maze = "Maze2.txt";
+		createMaze(maze);
 		menu = new Menu();
 
 		frame.addKeyListener(this);
@@ -117,10 +119,13 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		g2.setColor(Color.BLACK);
 		g2.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 
+		Font title = new Font("Positive System", Font.PLAIN, 100);
+		FontMetrics tm = g2.getFontMetrics(title);
+		Font main = new Font("SquareFont", Font.PLAIN, 30);
+		FontMetrics om = g2.getFontMetrics(main);
+
 		if (menu.isOnScreen()) {
 			if (menu.isOnStart()) {
-				Font title = new Font("Positive System", Font.PLAIN, 100);
-				FontMetrics tm = g2.getFontMetrics(title);
 				g2.setFont(title);
 
 				int titleX = frame.getWidth() / 2 - tm.stringWidth("MAZE") / 2;
@@ -129,9 +134,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				g2.drawString("MAZE", titleX, titleY);
 
 				g2.setColor(Color.WHITE);
-				Font main = new Font("SquareFont", Font.PLAIN, 30);
 				g2.setFont(main);
-				FontMetrics om = g2.getFontMetrics(main);
 				int optionY = frame.getHeight() / 2;
 
 				for (String option : menu.startNames()) {
@@ -177,12 +180,14 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 			}
 
 			if (gameOn != 2) {
-				g2.setColor(Color.RED);
-				g2.setFont(new Font("Helvetica", Font.PLAIN, 50));
+				g2.setColor(Color.BLACK);
+				g2.fillRect(0, 0, frame.getWidth(), frame.getHeight());
+				g2.setColor(Color.WHITE);
+				g2.setFont(new Font("SquareFont", Font.PLAIN, 50));
 				if(gameOn == 1) {
-					g2.drawString("You win!", frame.getWidth() / 2 - 100, frame.getHeight() / 2);
+					g2.drawString("YOU WIN", frame.getWidth() / 2 - 100, frame.getHeight() / 2);
 				} else if (gameOn == 0) {
-					g2.drawString("You lose!", frame.getWidth() / 2 - 100, frame.getHeight() / 2);
+					g2.drawString("GAME OVER", frame.getWidth() / 2 - 100, frame.getHeight() / 2);
 				}
 			}
 		}
@@ -222,15 +227,23 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 					if (hero.collision(m.hitBox()))
 						gameOn = 0;
 				}
+			} else if (gameOn == 0 || gameOn == 1) {
+				delay(1500);
+				createMaze(maze);
+				gameOn = 3;
+				menu.setOnScreen(true);
 			}
 
 			count += tick;
-			try {
-				Thread.sleep(tick);
-			} catch(InterruptedException e){}
-
+			delay(tick);
 			repaint();
 		}
+	}
+
+	public void delay(int milliseconds) {
+		try {
+			Thread.sleep(milliseconds);
+		} catch(InterruptedException e){}
 	}
 
 	public void teleport() {
