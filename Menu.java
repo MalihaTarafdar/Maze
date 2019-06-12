@@ -2,6 +2,7 @@ public class Menu {
 
   private boolean onScreen;
   private boolean onStart;
+  private boolean onMap;
   private int i;
 
   private String[] startOptionsNames = {"Play", "Create a Maze", "Settings", "Quit"};
@@ -35,6 +36,9 @@ public class Menu {
   public void setOnStart(boolean onStart) {
     this.onStart = onStart;
   }
+  public void setOnMap(boolean onMap) {
+    this.onMap = onMap;
+  }
 
   public boolean isOnScreen() {
     return onScreen;
@@ -42,6 +46,10 @@ public class Menu {
   public boolean isOnStart() {
     return onStart;
   }
+  public boolean isOnMap() {
+    return onMap;
+  }
+
   public String[] startNames() {
     return startOptionsNames;
   }

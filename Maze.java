@@ -32,7 +32,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 	private Entity end;
 	private Entity start;
 	private Menu menu;
-	private String maze;
+	private String map;
 
 	private boolean right = false;
 	private boolean left = false;
@@ -44,9 +44,15 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		frame = new JFrame("Maze");
 		frame.add(this);
 
+		try {
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("./fonts/Positive System.otf")));
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("./fonts/Square.ttf")));
+		} catch (IOException|FontFormatException e) {}
+
 		hero = new Hero(0, 0, entityWidth, entityHeight, Color.GREEN);
-		maze = "Maze2.txt";
-		createMaze(maze);
+		map = "./mazes/Maze2.txt";
+		createMaze(map);
 		menu = new Menu();
 
 		frame.addKeyListener(this);
@@ -148,6 +154,8 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 						g2.fillRect(frame.getWidth() / 2 - 150, optionY, 10, 10);
 					}
 				}
+			} else if (menu.isOnMap()) {
+
 			}
 
 		} else {
@@ -229,9 +237,10 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				}
 			} else if (gameOn == 0 || gameOn == 1) {
 				delay(1500);
-				createMaze(maze);
+				createMaze(map);
 				gameOn = 3;
 				menu.setOnScreen(true);
+				menu.setOnStart(true);
 			}
 
 			count += tick;
@@ -283,9 +292,15 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				menu.moveUp();
 			if (e.getKeyCode() == KeyEvent.VK_DOWN)
 				menu.moveDown();
-			if (e.getKeyCode() == KeyEvent.VK_ENTER && menu.getStartOptions()[0]) {
-				menu.setOnScreen(false);
-				gameOn = 2;
+
+			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				if (menu.getStartOptions()[0]) {
+					menu.setOnStart(false);
+					menu.setOnScreen(false);
+					gameOn = 2;
+				} else if (menu.getStartOptions()[3]) {
+					System.exit(0);
+				}
 			}
 		}
 	}
