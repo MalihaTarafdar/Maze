@@ -301,7 +301,6 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				if (menu.getStartOptions()[0]) {
 					menu.setOnStart(false);
 					menu.setOnMap(true);
-					gameOn = 2;
 				} else if (menu.getStartOptions()[3]) {
 					System.exit(0);
 				}
