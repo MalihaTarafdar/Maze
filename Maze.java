@@ -155,9 +155,13 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 					}
 				}
 			} else if (menu.isOnMap()) {
+				Font font = new Font("SquareFont", Font.PLAIN, 40);
+				FontMetrics fm = g2.getFontMetrics(font);
+				g2.setColor(Color.WHITE);
+				g2.setFont(font);
+				g2.drawString("Choose A Maze", frame.getWidth() / 2 - fm.stringWidth("Choose A Maze") / 2, frame.getHeight() / 3);
 
 			}
-
 		} else {
 			for(Wall wall : walls) {
 				g2.setColor(wall.getColor());
@@ -296,7 +300,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 				if (menu.getStartOptions()[0]) {
 					menu.setOnStart(false);
-					menu.setOnScreen(false);
+					menu.setOnMap(true);
 					gameOn = 2;
 				} else if (menu.getStartOptions()[3]) {
 					System.exit(0);
