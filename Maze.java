@@ -27,8 +27,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 
 	private JFrame frame;
 	private Thread thread;
-	private Hero hero1;
-	private Hero hero2;
+	private Hero hero;
 	private Monster monster;
 	private Entity end;
 	private Entity start;
@@ -44,7 +43,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		frame = new JFrame("Maze");
 		frame.add(this);
 
-		hero1 = new Hero(0, 0, entityWidth, entityHeight, Color.GREEN);
+		hero = new Hero(0, 0, entityWidth, entityHeight, Color.GREEN);
 		createMaze("Maze2.txt");
 		menu = new Menu();
 
@@ -90,8 +89,8 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 					}
 
 					if (c == 'S') {
-						hero1.setX(x + entityWidth / 2);
-						hero1.setY(y + entityHeight / 2);
+						hero.setX(x + entityWidth / 2);
+						hero.setY(y + entityHeight / 2);
 					}
 					if (c == 'M') {
 						monsters.add(new Monster(x + entityWidth / 2, y + entityHeight / 2, entityWidth, entityHeight, Color.RED, 1));
@@ -118,7 +117,37 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		g2.setColor(Color.BLACK);
 		g2.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 
-		if (!menu.isOnScreen()) {
+		if (menu.isOnScreen()) {
+			if (menu.isOnStart()) {
+				Font title = new Font("Positive System", Font.PLAIN, 100);
+				FontMetrics tm = g2.getFontMetrics(title);
+				g2.setFont(title);
+
+				int titleX = frame.getWidth() / 2 - tm.stringWidth("MAZE") / 2;
+				int titleY = frame.getHeight() / 3;
+				g2.setPaint(new GradientPaint(titleX, titleY, Color.BLUE, titleX + tm.stringWidth("MAZE"), titleY + tm.getHeight(), Color.CYAN));
+				g2.drawString("MAZE", titleX, titleY);
+
+				g2.setColor(Color.WHITE);
+				Font main = new Font("SquareFont", Font.PLAIN, 30);
+				g2.setFont(main);
+				FontMetrics om = g2.getFontMetrics(main);
+				int optionY = frame.getHeight() / 2;
+
+				for (String option : menu.startNames()) {
+					g2.drawString(option, frame.getWidth() / 2 - om.stringWidth(option) / 2, optionY);
+					optionY += 50;
+				}
+				for (int i = 0; i < menu.getStartOptions().length; i++) {
+					if (menu.getStartOptions()[i]) {
+						optionY = frame.getHeight() / 2 - 20 + 52 * i;
+						g2.setColor(Color.BLUE);
+						g2.fillRect(frame.getWidth() / 2 - 150, optionY, 10, 10);
+					}
+				}
+			}
+
+		} else {
 			for(Wall wall : walls) {
 				g2.setColor(wall.getColor());
 				g2.fill(wall.hitBox());
@@ -139,28 +168,23 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 					g2.draw(p.hitBox());
 			}
 
-			g2.setColor(hero1.getColor());
-			g2.fill(hero1.getEllipse());
+			g2.setColor(hero.getColor());
+			g2.fill(hero.getEllipse());
 
 			for (Monster m : monsters) {
 				g2.setColor(m.getColor());
 				g2.fill(m.getEllipse());
 			}
 
-			g2.setColor(Color.RED);
-			g2.setFont(new Font("Helvetica", Font.PLAIN, 50));
-
-			if(gameOn == 1) {
-				g2.drawString("You win!", frame.getWidth() / 2 - 100, frame.getHeight() / 2);
-			} else if (gameOn == 0) {
-				g2.drawString("You lose!", frame.getWidth() / 2 - 100, frame.getHeight() / 2);
+			if (gameOn != 2) {
+				g2.setColor(Color.RED);
+				g2.setFont(new Font("Helvetica", Font.PLAIN, 50));
+				if(gameOn == 1) {
+					g2.drawString("You win!", frame.getWidth() / 2 - 100, frame.getHeight() / 2);
+				} else if (gameOn == 0) {
+					g2.drawString("You lose!", frame.getWidth() / 2 - 100, frame.getHeight() / 2);
+				}
 			}
-		} else {
-			g2.setColor(Color.WHITE);
-			g2.setFont(new Font("Helvetica", Font.BOLD, 50));
-			g2.drawString("MAZE", frame.getWidth() / 2 - 70, frame.getHeight() / 3);
-			g2.setFont(new Font("Helvetica", Font.PLAIN, 30));
-			g2.drawString("Press SPACE to start", frame.getWidth() / 2 - 140, frame.getHeight() / 2);
 		}
 	}
 
@@ -168,13 +192,13 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		while(true) {
 			if(gameOn == 2) {
 				if(up)
-					hero1.move('W', walls, doors);
+					hero.move('W', walls, doors);
 				if(right)
-					hero1.move('D', walls, doors);
+					hero.move('D', walls, doors);
 				if(down)
-					hero1.move('S', walls, doors);
+					hero.move('S', walls, doors);
 				if(left)
-					hero1.move('A', walls, doors);
+					hero.move('A', walls, doors);
 
 				for (Monster m : monsters) {
 					if (count % 2 == 0)
@@ -182,20 +206,20 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				}
 
 				for (int i = 0; i < switches.size(); i++) {
-					if (!switches.get(i).isOn() && hero1.collision(switches.get(i).hitBox())) {
+					if (!switches.get(i).isOn() && hero.collision(switches.get(i).hitBox())) {
 						doors.get(switchDoorNumbers.get(i)).setState(true);
 						switches.get(i).setState(true);
 					}
-					if (!hero1.collision(portals.get(i).hitBox()) && switches.get(i).isOn())
+					if (!hero.collision(portals.get(i).hitBox()) && switches.get(i).isOn())
 						portals.get(i).setState(true);
 				}
 
 				teleport();
 
-				if (hero1.collision(end.hitBox()))
+				if (hero.collision(end.hitBox()))
 					gameOn = 1;
 				for (Monster m : monsters) {
-					if (hero1.collision(m.hitBox()))
+					if (hero.collision(m.hitBox()))
 						gameOn = 0;
 				}
 			}
@@ -211,7 +235,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 
 	public void teleport() {
 		for (int i = 0; i < portals.size(); i++) {
-			if (hero1.collision(portals.get(i).hitBox()) && portals.get(i).isOn()) {
+			if (hero.collision(portals.get(i).hitBox()) && portals.get(i).isOn()) {
 				int numOpenPortals = 0;
 				for (Entity p : portals) {
 					if (p.isOn())
@@ -220,14 +244,14 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				if (numOpenPortals > 1 && !teleported) {
 					do {
 						randPortal = (int)(Math.random() * portals.size());
-					} while (hero1.collision(portals.get(randPortal).hitBox()) || !portals.get(randPortal).isOn());
-					hero1.setX(portals.get(randPortal).getX());
-					hero1.setY(portals.get(randPortal).getY());
+					} while (hero.collision(portals.get(randPortal).hitBox()) || !portals.get(randPortal).isOn());
+					hero.setX(portals.get(randPortal).getX());
+					hero.setY(portals.get(randPortal).getY());
 					teleported = true;
 				}
 			}
 		}
-		if (!hero1.collision(portals.get(randPortal).hitBox()))
+		if (!hero.collision(portals.get(randPortal).hitBox()))
 			teleported = false;
 	}
 
@@ -240,6 +264,17 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 			down = true;
 		else if (e.getKeyCode() == KeyEvent.VK_A)
 			left = true;
+
+		if (menu.isOnStart()) {
+			if (e.getKeyCode() == KeyEvent.VK_UP)
+				menu.moveUp();
+			if (e.getKeyCode() == KeyEvent.VK_DOWN)
+				menu.moveDown();
+			if (e.getKeyCode() == KeyEvent.VK_ENTER && menu.getStartOptions()[0]) {
+				menu.setOnScreen(false);
+				gameOn = 2;
+			}
+		}
 	}
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_W)
@@ -250,10 +285,6 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 			down = false;
 		if (e.getKeyCode() == KeyEvent.VK_A)
 			left = false;
-		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-			menu.setOnScreen(false);
-			gameOn = 2;
-		}
 	}
 	public void keyTyped(KeyEvent e) {}
 

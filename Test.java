@@ -28,14 +28,14 @@ public class Test extends JPanel implements Runnable {
   }
 
   public void run() {
-    Timer timer = new Timer(1000, new ActionListener() {
+    /*Timer timer = new Timer(1000, new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         seconds++;
         System.out.println(seconds);
       }
     });
     timer.setRepeats(true);
-    timer.start();
+    timer.start();*/
 
     delay(5);
 
@@ -53,6 +53,12 @@ public class Test extends JPanel implements Runnable {
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setColor(Color.BLACK);
 		g2.fillRect(0, 0, frame.getWidth(), frame.getHeight());
+
+    g2.setPaint(new GradientPaint(200, 215, Color.BLACK, 200, 230, Color.BLUE));
+    g2.fillRect(200, 200, 10, 30);
+    g2.fillRect(200, 200, 30, 10);
+    g2.fillRect(200, 230, 30, 10);
+    g2.fillRect(230, 200, 10, 40);
   }
 
   public static void main(String[] args) {
