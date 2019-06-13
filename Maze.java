@@ -2,6 +2,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class Maze extends JPanel implements KeyListener, MouseListener, Runnable {
@@ -32,6 +34,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 	private Entity end;
 	private Entity start;
 	private Menu menu;
+	private BufferedImage mazeImg;
 	private String map = "";
 
 	private boolean right = false;
@@ -163,6 +166,10 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				int optionX = frame.getWidth() / 4;
 				for (String option : menu.getMapNames()) {
 					g2.drawString(option, optionX, frame.getHeight() * 2 / 3);
+					try {
+						mazeImg = ImageIO.read(new File(option + ".png"));
+					} catch (IOException e) {}
+					g2.drawImage(mazeImg, optionX, frame.getHeight() * 2, this);
 					optionX += 300;
 				}
 				for (int i = 0; i < menu.getMapOptions().length; i++) {
@@ -264,9 +271,9 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		}
 	}
 
-	public void delay(int milliseconds) {
+	public void delay(int ms) {
 		try {
-			Thread.sleep(milliseconds);
+			Thread.sleep(ms);
 		} catch(InterruptedException e){}
 	}
 

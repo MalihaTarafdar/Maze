@@ -2,12 +2,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.io.*;
+import java.util.logging.*;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.awt.event.*;
 
 public class Test extends JPanel implements Runnable {
 
   private JFrame frame;
   int seconds = 0;
+  private BufferedImage mazeImg;
 
   public Test() {
     frame = new JFrame("Test");
@@ -54,11 +58,17 @@ public class Test extends JPanel implements Runnable {
 		g2.setColor(Color.BLACK);
 		g2.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 
-    g2.setPaint(new GradientPaint(200, 215, Color.BLACK, 200, 230, Color.BLUE));
+    /*g2.setPaint(new GradientPaint(200, 215, Color.BLACK, 200, 230, Color.BLUE));
     g2.fillRect(200, 200, 10, 30);
     g2.fillRect(200, 200, 30, 10);
     g2.fillRect(200, 230, 30, 10);
-    g2.fillRect(230, 200, 10, 40);
+    g2.fillRect(230, 200, 10, 40);*/
+    String option = "Maze 1";
+    try {
+      mazeImg = ImageIO.read(new File(option + ".png"));
+    } catch (IOException e) {}
+    g2.drawImage(mazeImg, 50, 50, this);
+    repaint();
   }
 
   public static void main(String[] args) {
