@@ -158,28 +158,34 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 			} else if (menu.isOnMap()) {
 				Font font = new Font("SquareFont", Font.PLAIN, 40);
 				FontMetrics fm = g2.getFontMetrics(font);
-				g2.setColor(Color.WHITE);
+
+				int titleX = frame.getWidth() / 2 - fm.stringWidth("Choose A Maze") / 2;
+				int titleY = frame.getHeight() / 4;
+				g2.setPaint(new GradientPaint(titleX, titleY, Color.BLUE, titleX + tm.stringWidth("MAZE"), titleY + tm.getHeight(), Color.CYAN));
 				g2.setFont(font);
-				g2.drawString("Choose A Maze", frame.getWidth() / 2 - fm.stringWidth("Choose A Maze") / 2, frame.getHeight() / 4);
+				g2.drawString("Choose A Maze", titleX, titleY);
 
 				g2.setFont(main);
+				g2.setColor(Color.WHITE);
 				int optionX = frame.getWidth() / 4;
 				for (String option : menu.getMapNames()) {
 					g2.drawString(option, optionX, frame.getHeight() * 2 / 3);
 					try {
-						mazeImg = ImageIO.read(new File(option + ".png"));
+						mazeImg = ImageIO.read(new File("./img/" + option + ".png"));
 					} catch (IOException e) {}
-					g2.drawImage(mazeImg, optionX, frame.getHeight() * 2, this);
+					g2.drawImage(mazeImg, optionX - 18, frame.getHeight() / 2 - 33, this);
 					optionX += 300;
 				}
 				for (int i = 0; i < menu.getMapOptions().length; i++) {
 					if (menu.getMapOptions()[i]) {
 						optionX = frame.getWidth() / 4 - 55 + 300 * i;
 						g2.setColor(Color.BLUE);
-						g2.drawRect(optionX, frame.getHeight() / 2 - 50, 200, 200);
+						g2.drawRect(optionX, frame.getHeight() / 2 - 60, 200, 200);
 					}
 				}
 			}
+		} else if (menu.isOnSettings()) {
+
 		} else {
 			for(Wall wall : walls) {
 				g2.setColor(wall.getColor());
@@ -220,12 +226,33 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 					g2.drawString("GAME OVER", frame.getWidth() / 2 - 100, frame.getHeight() / 2);
 				}
 			}
+			if (menu.isPaused()) {
+				g2.setColor(Color.WHITE);
+				g2.fillRect(frame.getWidth() / 6 - 5, frame.getHeight() / 6 - 5, 210, 160);
+				g2.setColor(Color.BLACK);
+				g2.fillRect(frame.getWidth() / 6, frame.getHeight() / 6, 200, 150);
+
+				g2.setFont(main);
+				g2.setColor(Color.WHITE);
+				int optionY = frame.getHeight() / 5 + 30;
+				for (String option : menu.getPauseNames()) {
+					g2.drawString(option, frame.getWidth() / 5 + 65 - om.stringWidth(option) / 2, optionY);
+					optionY += 50;
+				}
+				for (int i = 0; i < menu.getPauseOptions().length; i++) {
+					if (menu.getPauseOptions()[i]) {
+						optionY = frame.getHeight() / 5 + 10 + 52 * i;
+						g2.setColor(Color.BLUE);
+						g2.fillRect(frame.getWidth() / 5 - 10, optionY, 10, 10);
+					}
+				}
+			}
 		}
 	}
 
 	public void run() {
 		while(true) {
-			if(gameOn == 2) {
+			if(gameOn == 2 && !menu.isPaused()) {
 				if(up)
 					hero.move('W', walls, doors);
 				if(right)
@@ -259,7 +286,6 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				}
 			} else if (gameOn == 0 || gameOn == 1) {
 				delay(1500);
-				createMaze(map);
 				gameOn = 3;
 				menu.setOnScreen(true);
 				menu.setOnStart(true);
@@ -311,9 +337,9 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 
 		if (menu.isOnStart()) {
 			if (e.getKeyCode() == KeyEvent.VK_UP)
-				menu.moveUp();
+				menu.moveBackward(0);
 			if (e.getKeyCode() == KeyEvent.VK_DOWN)
-				menu.moveDown();
+				menu.moveForward(0);
 
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 				if (menu.getStartOptions()[0]) {
@@ -325,9 +351,9 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 			}
 		} else if (menu.isOnMap()) {
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT)
-				menu.moveRight();
+				menu.moveForward(1);
 			if (e.getKeyCode() == KeyEvent.VK_LEFT)
-				menu.moveLeft();
+				menu.moveBackward(1);
 
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 				if (menu.getMapOptions()[0])
@@ -337,16 +363,34 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				else if (menu.getMapOptions()[2])
 					map = "./mazes/Maze3.txt";
 				menu.setOnMap(false);
-				menu.resetMapOptions();
+				menu.resetOptions();
 				menu.setOnScreen(false);
 				createMaze(map);
 				gameOn = 2;
 			}
 
-			if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				menu.setOnMap(false);
-				menu.resetMapOptions();
+				menu.resetOptions();
 				menu.setOnStart(true);
+			}
+		}
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE && gameOn == 2)
+			menu.setPaused(true);
+		if (menu.isPaused()) {
+			if (e.getKeyCode() == KeyEvent.VK_UP)
+				menu.moveBackward(2);
+			if (e.getKeyCode() == KeyEvent.VK_DOWN)
+				menu.moveForward(2);
+
+			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				menu.setPaused(false);
+				if (menu.getPauseOptions()[1]) {
+					gameOn = 3;
+					menu.setOnScreen(true);
+					menu.setOnStart(true);
+				}
+				menu.resetOptions();
 			}
 		}
 	}
