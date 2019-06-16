@@ -190,8 +190,33 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				g2.drawString("How to Play", titleX, titleY);
 
 				g2.setFont(main);
+				g2.setColor(Color.BLUE);
+				int boxX = frame.getWidth() / 6;
+				int boxY = frame.getHeight() / 4;
+
+				g2.drawRect(boxX, boxY, 900, 450);
 				g2.setColor(Color.WHITE);
-				g2.drawRect(frame.getWidth() / 6, frame.getHeight() / 4, 900, 450);
+				boxX += 30;
+				boxY += 60;
+				g2.drawString("Avoid monsters", boxX, boxY);
+				boxY += 60;
+				g2.drawString("Move with W, A, S, D", boxX, boxY);
+				boxY += 60;
+				g2.drawString("Press ESC to pause", boxX, boxY);
+				boxY += 60;
+				g2.drawString("Yellow keys open gray doors", boxX, boxY);
+				boxY += 60;
+				g2.drawString("After a key is collected, a portal appears", boxX, boxY);
+				boxY += 60;
+				g2.drawString("Portals can be used for fast travel", boxX, boxY);
+				boxY += 60;
+				g2.drawString("Reach the exit to win", boxX, boxY);
+			}
+
+			if (!menu.isOnStart()) {
+				g2.setPaint(new GradientPaint(40, 40, Color.BLUE, 72, 50, Color.CYAN));
+				g2.drawRect(30, 30, 72, 50);
+				g2.drawString("ESC", 40, 65);
 			}
 		} else {
 			for(Wall wall : walls) {
