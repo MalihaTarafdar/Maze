@@ -275,7 +275,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 					if (menu.getPauseOptions()[i]) {
 						optionY = frame.getHeight() / 5 + 10 + 52 * i;
 						g2.setColor(Color.BLUE);
-						g2.fillRect(frame.getWidth() / 5 - 10, optionY, 10, 10);
+						g2.fillRect(frame.getWidth() / 5 - 15, optionY, 10, 10);
 					}
 				}
 			}
