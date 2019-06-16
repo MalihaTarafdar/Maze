@@ -96,7 +96,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 					if (c >= 48 && c <= 57) {
 						switches.add(new Entity(x + 10, y + 10, 10, 10, Color.YELLOW));
 						switchDoorNumbers.add(Character.getNumericValue(text.charAt(i)));
-						portals.add(new Entity(x + 10, y + 10, 15, 15, Color.MAGENTA));
+						portals.add(new Entity(x + 8, y + 10, 15, 15, Color.MAGENTA));
 					}
 
 					if (c == 'S') {
