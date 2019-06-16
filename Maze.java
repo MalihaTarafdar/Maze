@@ -11,10 +11,10 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 
 	private ArrayList<Wall> walls;
 	private ArrayList<Entity> doors;
-	private ArrayList<Entity> switches;
+	private ArrayList<Entity> keys;
 	private ArrayList<Entity> portals;
 	private ArrayList<Monster> monsters;
-	private ArrayList<Integer> switchDoorNumbers;
+	private ArrayList<Integer> keyDoorNumbers;
 
 	private String[] mazes = {"Maze1", "Maze2", "Maze3"};
 
@@ -69,10 +69,10 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 	public void createMaze(String fileName) {
 		walls = new ArrayList<Wall>();
 		doors = new ArrayList<Entity>();
-		switches = new ArrayList<Entity>();
+		keys = new ArrayList<Entity>();
 		portals = new ArrayList<Entity>();
 		monsters = new ArrayList<Monster>();
-		switchDoorNumbers = new ArrayList<Integer>();
+		keyDoorNumbers = new ArrayList<Integer>();
 		end = new Entity(frame.getWidth(), frame.getHeight(), entityWidth, entityHeight, Color.MAGENTA);
 		start = new Entity(0, 0, entityWidth, entityHeight, Color.ORANGE);
 
@@ -94,8 +94,8 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 						doors.add(new Entity(x, y, wallWidth, wallHeight, Color.GRAY));
 
 					if (c >= 48 && c <= 57) {
-						switches.add(new Entity(x + 10, y + 10, 10, 10, Color.YELLOW));
-						switchDoorNumbers.add(Character.getNumericValue(text.charAt(i)));
+						keys.add(new Entity(x + 10, y + 10, 10, 10, Color.YELLOW));
+						keyDoorNumbers.add(Character.getNumericValue(text.charAt(i)));
 						portals.add(new Entity(x + 8, y + 10, 15, 15, Color.MAGENTA));
 					}
 
@@ -192,30 +192,34 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				g2.drawString("How to Play", titleX, titleY);
 
 				g2.setFont(main);
-				g2.setColor(Color.BLUE);
 				int boxX = frame.getWidth() / 6;
 				int boxY = frame.getHeight() / 4;
+				g2.setPaint(new GradientPaint(boxX, boxY, Color.BLUE, boxX + 900, boxY + 450, Color.CYAN));
 
 				g2.drawRect(boxX, boxY, 900, 450);
 				g2.setColor(Color.WHITE);
 				boxX += 30;
-				boxY += 60;
+				int shift = 52;
+				boxY += shift;
 				g2.drawString("Avoid monsters", boxX, boxY);
-				boxY += 60;
+				boxY += shift;
 				g2.drawString("Move with W, A, S, D", boxX, boxY);
-				boxY += 60;
+				boxY += shift;
 				g2.drawString("Press ESC to pause", boxX, boxY);
-				boxY += 60;
+				boxY += shift;
 				g2.drawString("Yellow keys open gray doors", boxX, boxY);
-				boxY += 60;
+				boxY += shift;
 				g2.drawString("After a key is collected, a portal appears", boxX, boxY);
-				boxY += 60;
+				boxY += shift;
 				g2.drawString("Portals can be used for fast travel", boxX, boxY);
-				boxY += 60;
+				boxY += shift;
 				g2.drawString("Reach the exit to win", boxX, boxY);
+				boxY += shift;
+				g2.drawString("Maze 3 is not impossible", boxX, boxY);
 			}
 
 			if (!menu.isOnStart()) {
+				g2.setFont(main);
 				g2.setPaint(new GradientPaint(40, 40, Color.BLUE, 72, 50, Color.CYAN));
 				g2.drawRect(30, 30, 72, 50);
 				g2.drawString("ESC", 40, 65);
@@ -225,10 +229,10 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				g2.setColor(wall.getColor());
 				g2.fill(wall.hitBox());
 			}
-			for (Entity s : switches) {
-				g2.setColor(s.getColor());
-				if (!s.isOn())
-					g2.fill(s.hitBox());
+			for (Entity key : keys) {
+				g2.setColor(key.getColor());
+				if (!key.isOn())
+					g2.fill(key.hitBox());
 			}
 			for (Entity door : doors) {
 				g2.setColor(door.getColor());
@@ -301,12 +305,12 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 						m.move(walls, doors, monsters);
 				}
 
-				for (int i = 0; i < switches.size(); i++) {
-					if (!switches.get(i).isOn() && hero.collision(switches.get(i).hitBox())) {
-						doors.get(switchDoorNumbers.get(i)).setState(true);
-						switches.get(i).setState(true);
+				for (int i = 0; i < keys.size(); i++) {
+					if (!keys.get(i).isOn() && hero.collision(keys.get(i).hitBox())) {
+						doors.get(keyDoorNumbers.get(i)).setState(true);
+						keys.get(i).setState(true);
 					}
-					if (!hero.collision(portals.get(i).hitBox()) && switches.get(i).isOn())
+					if (!hero.collision(portals.get(i).hitBox()) && keys.get(i).isOn())
 						portals.get(i).setState(true);
 				}
 
