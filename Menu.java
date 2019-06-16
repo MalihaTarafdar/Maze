@@ -7,7 +7,7 @@ public class Menu {
   private boolean onSettings;
   private int i;
 
-  private String[] startOptionsNames = {"Play", "Settings", "Quit"};
+  private String[] startOptionsNames = {"Play", "How to Play", "Quit"};
   private String[] mapNames = {"Maze 1", "Maze 2", "Maze 3"};
   private String[] pauseNames = {"Resume", "Menu"};
 
