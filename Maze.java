@@ -56,6 +56,8 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		frame.addKeyListener(this);
 		frame.setSize(1300, 750);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		frame.setResizable(false);
 		frame.setVisible(true);
 		thread = new Thread(this);
 		thread.start();
