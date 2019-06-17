@@ -13,7 +13,6 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 	private ArrayList<Entity> keys;
 	private ArrayList<Entity> portals;
 	private ArrayList<Integer> keyDoorNumbers;
-	private String[] mazes = {"Maze1", "Maze2", "Maze3"};
 
 	private int entityWidth = 20;
 	private int entityHeight = 20;
@@ -190,7 +189,7 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 				boxX += 30;
 				int shift = 52;
 				boxY += shift;
-				g2.drawString("Avoid monsters", boxX, boxY);
+				g2.drawString("Avoid monsters (red)", boxX, boxY);
 				boxY += shift;
 				g2.drawString("Move with W, A, S, D", boxX, boxY);
 				boxY += shift;
@@ -312,6 +311,13 @@ public class Maze extends JPanel implements KeyListener, Runnable {
 			} else if (gameOn == 0 || gameOn == 1) {
 				delay(1500);
 				gameOn = 3;
+				portals.clear();
+				walls.clear();
+				monsters.clear();
+				doors.clear();
+				keys.clear();
+				keyDoorNumbers.clear();
+				randPortal = 0;
 				menu.setOnScreen(true);
 				menu.setOnStart(true);
 			}
