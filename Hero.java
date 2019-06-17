@@ -36,7 +36,7 @@ public class Hero extends Entity {
 		else if (dir == 'A')
 			setX(getX() - 1);
 
-		if (collision(walls, doors)) {
+		if (collision(walls, doors)) { //if collides, undo
 			if (dir == 'W')
 				setY(getY() + 1);
 			else if (dir == 'D')

@@ -6,16 +6,13 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class Maze extends JPanel implements KeyListener, MouseListener, Runnable {
-	private static final long serialVersionUID = 42l;
-
+public class Maze extends JPanel implements KeyListener, Runnable {
 	private ArrayList<Wall> walls;
+	private ArrayList<Monster> monsters;
 	private ArrayList<Entity> doors;
 	private ArrayList<Entity> keys;
 	private ArrayList<Entity> portals;
-	private ArrayList<Monster> monsters;
 	private ArrayList<Integer> keyDoorNumbers;
-
 	private String[] mazes = {"Maze1", "Maze2", "Maze3"};
 
 	private int entityWidth = 20;
@@ -26,16 +23,15 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 	private int randPortal = 0;
 	private int tickSpeed = 3;
 	private int milliseconds = 0;
+	private String map = "";
 
 	private JFrame frame;
 	private Thread thread;
 	private Hero hero;
-	private Monster monster;
-	private Entity end;
 	private Entity start;
+	private Entity end;
 	private Menu menu;
 	private BufferedImage mazeImg;
-	private String map = "";
 
 	private boolean right = false;
 	private boolean left = false;
@@ -68,13 +64,13 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 
 	public void createMaze(String fileName) {
 		walls = new ArrayList<Wall>();
+		monsters = new ArrayList<Monster>();
 		doors = new ArrayList<Entity>();
 		keys = new ArrayList<Entity>();
 		portals = new ArrayList<Entity>();
-		monsters = new ArrayList<Monster>();
 		keyDoorNumbers = new ArrayList<Integer>();
-		end = new Entity(frame.getWidth(), frame.getHeight(), entityWidth, entityHeight, Color.MAGENTA);
 		start = new Entity(0, 0, entityWidth, entityHeight, Color.ORANGE);
+		end = new Entity(frame.getWidth(), frame.getHeight(), entityWidth, entityHeight, Color.MAGENTA);
 
 		File name = new File(fileName);
 
@@ -86,31 +82,25 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 			while((text = input.readLine()) != null) {
 				for(int i = 0; i < text.length(); i++) {
 					char c = text.charAt(i);
-
 					if(c == '*')
 						walls.add(new Wall(x, y, wallWidth, wallHeight, Color.BLUE));
-
 					if (c == '-')
 						doors.add(new Entity(x, y, wallWidth, wallHeight, Color.GRAY));
-
 					if (c >= 48 && c <= 57) {
 						keys.add(new Entity(x + 10, y + 10, 10, 10, Color.YELLOW));
 						keyDoorNumbers.add(Character.getNumericValue(text.charAt(i)));
 						portals.add(new Entity(x + 8, y + 10, 15, 15, Color.MAGENTA));
 					}
-
+					if (c == 'M')
+						monsters.add(new Monster(x + entityWidth / 2, y + entityHeight / 2, entityWidth, entityHeight, Color.RED, 1));
 					if (c == 'S') {
 						hero.setX(x + entityWidth / 2);
 						hero.setY(y + entityHeight / 2);
-					}
-					if (c == 'M') {
-						monsters.add(new Monster(x + entityWidth / 2, y + entityHeight / 2, entityWidth, entityHeight, Color.RED, 1));
 					}
 					if (c == 'E') {
 						end.setX(x);
 						end.setY(y);
 					}
-
 					x += wallWidth;
 				}
 				y += wallHeight;
@@ -135,10 +125,9 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		Font font = new Font("SquareFont", Font.PLAIN, 40);
 		FontMetrics fm = g2.getFontMetrics(font);
 
-		if (menu.isOnScreen()) {
-			if (menu.isOnStart()) {
+		if (menu.isOnScreen()) { //on menu
+			if (menu.isOnStart()) { //on start screen
 				g2.setFont(title);
-
 				int titleX = frame.getWidth() / 2 - tm.stringWidth("MAZE") / 2;
 				int titleY = frame.getHeight() / 3;
 				g2.setPaint(new GradientPaint(titleX, titleY, Color.BLUE, titleX + tm.stringWidth("MAZE"), titleY + tm.getHeight(), Color.CYAN));
@@ -159,7 +148,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 						g2.fillRect(frame.getWidth() / 2 - 150, optionY, 10, 10);
 					}
 				}
-			} else if (menu.isOnMap()) {
+			} else if (menu.isOnMap()) { //on map selection
 				int titleX = frame.getWidth() / 2 - fm.stringWidth("Choose A Maze") / 2;
 				int titleY = frame.getHeight() / 4;
 				g2.setPaint(new GradientPaint(titleX, titleY, Color.BLUE, titleX + fm.stringWidth("Choose A Maze"), titleY + fm.getHeight(), Color.CYAN));
@@ -184,7 +173,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 						g2.drawRect(optionX, frame.getHeight() / 2 - 60, 200, 200);
 					}
 				}
-			} else if (menu.isOnSettings()) {
+			} else if (menu.isOnHow()) { //on how to play
 				int titleX = frame.getWidth() / 2 - fm.stringWidth("How to Play") / 2;
 				int titleY = frame.getHeight() / 6;
 				g2.setPaint(new GradientPaint(titleX, titleY, Color.BLUE, titleX + fm.stringWidth("How to Play"), titleY + fm.getHeight(), Color.CYAN));
@@ -218,13 +207,13 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				g2.drawString("Maze 3 is not impossible", boxX, boxY);
 			}
 
-			if (!menu.isOnStart()) {
+			if (!menu.isOnStart()) { //back button
 				g2.setFont(main);
 				g2.setPaint(new GradientPaint(40, 40, Color.BLUE, 72, 50, Color.CYAN));
 				g2.drawRect(30, 30, 72, 50);
 				g2.drawString("ESC", 40, 65);
 			}
-		} else {
+		} else { //in game
 			for(Wall wall : walls) {
 				g2.setColor(wall.getColor());
 				g2.fill(wall.hitBox());
@@ -244,16 +233,14 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				if (p.isOn())
 					g2.draw(p.hitBox());
 			}
-
 			g2.setColor(hero.getColor());
 			g2.fill(hero.getEllipse());
-
 			for (Monster m : monsters) {
 				g2.setColor(m.getColor());
 				g2.fill(m.getEllipse());
 			}
 
-			if (gameOn != 2) {
+			if (gameOn != 2) { //game end
 				g2.setColor(Color.BLACK);
 				g2.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 				g2.setColor(Color.WHITE);
@@ -264,7 +251,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 					g2.drawString("GAME OVER", frame.getWidth() / 2 - 100, frame.getHeight() / 2);
 				}
 			}
-			if (menu.isPaused()) {
+			if (menu.isPaused()) { //pause menu
 				g2.setColor(Color.WHITE);
 				g2.fillRect(frame.getWidth() / 6 - 5, frame.getHeight() / 6 - 5, 210, 160);
 				g2.setColor(Color.BLACK);
@@ -328,7 +315,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				menu.setOnScreen(true);
 				menu.setOnStart(true);
 			}
-			if (milliseconds % tickSpeed == 0 && milliseconds > 10)
+			if (milliseconds % tickSpeed == 0 && milliseconds > 30) //so milliseconds doesn't get too large
 				milliseconds = 0;
 
 			milliseconds += tickSpeed;
@@ -343,7 +330,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		} catch(InterruptedException e){}
 	}
 
-	public void teleport() {
+	public void teleport() { //teleportation through portals
 		for (int i = 0; i < portals.size(); i++) {
 			if (hero.collision(portals.get(i).hitBox()) && portals.get(i).isOn()) {
 				int numOpenPortals = 0;
@@ -375,7 +362,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		else if (e.getKeyCode() == KeyEvent.VK_A)
 			left = true;
 
-		if (menu.isOnStart()) {
+		if (menu.isOnStart()) { //on start screen
 			if (e.getKeyCode() == KeyEvent.VK_UP)
 				menu.moveBackward(0);
 			if (e.getKeyCode() == KeyEvent.VK_DOWN)
@@ -383,14 +370,14 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 				menu.setOnStart(false);
-				if (menu.getStartOptions()[0])
+				if (menu.getStartOptions()[0]) //select map
 					menu.setOnMap(true);
-				else if (menu.getStartOptions()[1])
-					menu.setOnSettings(true);
-				else if (menu.getStartOptions()[2])
+				else if (menu.getStartOptions()[1]) //how to play
+					menu.setOnHow(true);
+				else if (menu.getStartOptions()[2]) //quit
 					System.exit(0);
 			}
-		} else if (menu.isOnMap()) {
+		} else if (menu.isOnMap()) { //on map selection
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT)
 				menu.moveForward(1);
 			if (e.getKeyCode() == KeyEvent.VK_LEFT)
@@ -411,33 +398,33 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				milliseconds = 0;
 			}
 
-			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) { //go back to start
 				menu.setOnMap(false);
 				menu.resetOptions();
 				menu.setOnStart(true);
 			}
-		} else if (menu.isOnSettings()) {
-			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-				menu.setOnSettings(false);
+		} else if (menu.isOnHow()) { //on how to play
+			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) { //go back to start
+				menu.setOnHow(false);
 				menu.resetOptions();
 				menu.setOnStart(true);
 			}
 		}
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE && gameOn == 2)
 			menu.setPaused(true);
-		if (menu.isPaused()) {
+		if (menu.isPaused()) { //on pause menu
 			if (e.getKeyCode() == KeyEvent.VK_UP)
 				menu.moveBackward(2);
 			if (e.getKeyCode() == KeyEvent.VK_DOWN)
 				menu.moveForward(2);
 
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				menu.setPaused(false);
-				if (menu.getPauseOptions()[1]) {
+				if (menu.getPauseOptions()[1]) { //go back to start
 					gameOn = 3;
 					menu.setOnScreen(true);
 					menu.setOnStart(true);
 				}
+				menu.setPaused(false); //resume
 				menu.resetOptions();
 			}
 		}
@@ -453,14 +440,6 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 			left = false;
 	}
 	public void keyTyped(KeyEvent e) {}
-
-	public void mouseExited(MouseEvent e) {}
-	public void mouseEntered(MouseEvent e) {}
-	public void mouseReleased(MouseEvent e) {
-
-	}
-	public void mousePressed(MouseEvent e) {}
-	public void mouseClicked(MouseEvent e) {}
 
 	public static void main(String[] args) {
 		Maze app = new Maze();

@@ -4,7 +4,7 @@ public class Menu {
   private boolean onStart;
   private boolean onMap;
   private boolean paused;
-  private boolean onSettings;
+  private boolean onHow;
   private int i;
 
   private String[] startOptionsNames = {"Play", "How to Play", "Quit"};
@@ -95,8 +95,8 @@ public class Menu {
   public void setPaused(boolean paused) {
 	  this.paused = paused;
   }
-  public void setOnSettings(boolean onSettings) {
-	  this.onSettings = onSettings;
+  public void setOnHow(boolean onHow) {
+	  this.onHow = onHow;
   }
 
   public boolean isOnScreen() {
@@ -111,8 +111,8 @@ public class Menu {
   public boolean isPaused() {
 	return paused;
   }
-  public boolean isOnSettings() {
-	  return onSettings;
+  public boolean isOnHow() {
+	  return onHow;
   }
 
   public String[] getStartNames() {
