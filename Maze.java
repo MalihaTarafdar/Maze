@@ -24,8 +24,8 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 	private int wallHeight = 30;
 	private int gameOn = 3;
 	private int randPortal = 0;
-	private int tick = 3;
-	private double count = 0;
+	private int tickSpeed = 3;
+	private int milliseconds = 0;
 
 	private JFrame frame;
 	private Thread thread;
@@ -128,7 +128,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 		g2.setColor(Color.BLACK);
 		g2.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 
-		Font title = new Font("Positive System", Font.PLAIN, 100);
+		Font title = new Font("Positive System", Font.PLAIN, 120);
 		FontMetrics tm = g2.getFontMetrics(title);
 		Font main = new Font("SquareFont", Font.PLAIN, 30);
 		FontMetrics om = g2.getFontMetrics(main);
@@ -301,8 +301,8 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 					hero.move('A', walls, doors);
 
 				for (Monster m : monsters) {
-					if (count % 2 == 0)
-						m.move(walls, doors, monsters);
+					if (milliseconds % 2 == 0) //so hero faster than monster
+						m.move(walls, doors, monsters, end);
 				}
 
 				for (int i = 0; i < keys.size(); i++) {
@@ -328,9 +328,11 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				menu.setOnScreen(true);
 				menu.setOnStart(true);
 			}
+			if (milliseconds % tickSpeed == 0 && milliseconds > 10)
+				milliseconds = 0;
 
-			count += tick;
-			delay(tick);
+			milliseconds += tickSpeed;
+			delay(tickSpeed);
 			repaint();
 		}
 	}
@@ -406,6 +408,7 @@ public class Maze extends JPanel implements KeyListener, MouseListener, Runnable
 				menu.setOnScreen(false);
 				createMaze(map);
 				gameOn = 2;
+				milliseconds = 0;
 			}
 
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
