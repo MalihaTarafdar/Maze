@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class Maze extends JPanel implements KeyListener, Runnable {
+	private static final long serialVersionUID = 42l;
 	private ArrayList<Wall> walls;
 	private ArrayList<Monster> monsters;
 	private ArrayList<Entity> doors;
